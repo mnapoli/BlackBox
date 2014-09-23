@@ -14,6 +14,9 @@ template:
             other:
                 name: Examples
                 items:
+                    example_encrypted:
+                        text: Encrypted file storage
+                        relativeUrl: doc/examples/encrypted-files.html
                     php-di:
                         text: PHP-DI
                         relativeUrl: doc/examples/php-di.html
