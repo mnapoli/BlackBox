@@ -10,7 +10,13 @@ template:
                         relativeUrl:
                     adapters:
                         text: Adapters
-                        absoluteUrl: doc/adapters.html
+                        relativeUrl: doc/adapters.html
             other:
-                name: Other topics
+                name: Examples
                 items:
+                    php-di:
+                        text: PHP-DI
+                        relativeUrl: doc/examples/php-di.html
+                    symfony:
+                        text: Symfony
+                        relativeUrl: doc/examples/symfony.html
