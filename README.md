@@ -37,6 +37,7 @@ Transformers also implement the `StorageInterface`. They are wrapping another st
 to transform the data before storage and after retrieval.
 
 - `JsonEncoder`
+- `YamlEncoder`
 - `PhpSerializerEncoder`
 - `ObjectArrayMapper`
 - `AesEncrypter`

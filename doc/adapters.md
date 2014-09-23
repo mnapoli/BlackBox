@@ -33,7 +33,7 @@ $storage = new ArrayStorage();
 $storage['foo'] = 'bar';
 ```
 
-## Transformer
+## Transformers
 
 ### `JsonEncoder`
 
@@ -45,6 +45,14 @@ $storage = new JsonEncoder($otherStorage, $pretty);
 ```
 
 If `$pretty` is true, then the JSON will be formatted to be human readable (false by default).
+
+### `YamlEncoder`
+
+Encodes data from and to YAML.
+
+```php
+$storage = new YamlEncoder($otherStorage);
+```
 
 ### `PhpSerializerEncoder`
 
