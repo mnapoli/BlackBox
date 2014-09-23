@@ -36,10 +36,10 @@ Backends implement the `StorageInterface` and store data into a backend:
 Transformers also implement the `StorageInterface`. They are wrapping another storage
 to transform the data before storage and after retrieval.
 
-- `JsonEncoder`: encodes data from and to JSON
-- `PhpSerializerEncoder`: encodes data using the PHP `serialize` function
-- `ObjectArrayMapper`: maps objects to arrays and vice-versa
-- `AesEncrypter`: encrypts and decrypts data using AES encryption
+- `JsonEncoder`
+- `PhpSerializerEncoder`
+- `ObjectArrayMapper`
+- `AesEncrypter`
 
 You can read all about the adapters in the [Adapters documentation](doc/adapters.md).
 

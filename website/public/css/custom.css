@@ -10,6 +10,11 @@ section {
     margin-bottom: 50px;
 }
 
+h2 {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
 h3 {
     font-size: 23px;
 }
@@ -69,4 +74,8 @@ code {
     padding: 4px 4px 1px;
     margin: 0 4px;
     border-radius: 3px;
+}
+
+main .lead {
+    margin-top: 20px;
 }

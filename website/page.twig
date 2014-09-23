@@ -43,7 +43,7 @@
 
                         <ul class="nav nav-pills nav-stacked">
                             {% for itemId, item in section.items %}
-                                <li class="{{ itemId == 'introduction' ? 'active' }}">
+                                <li class="{{ itemId == currentMenu ? 'active' }}">
                                     <a href="{{ item.absoluteUrl|default(baseUrl ~ '/' ~ item.relativeUrl) }}">
                                         {{ item.text }}
                                     </a>
