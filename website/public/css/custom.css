@@ -24,7 +24,7 @@ header.navbar {
 .navbar .navbar-brand {
     font-size: 28px;
     height: auto;
-    line-height: 50px;
+    line-height: 35px;
     margin-left: 20px;
 }
 .navbar .navbar-brand small {
@@ -49,11 +49,6 @@ header.navbar {
 
 .page-header {
     margin-top: 0;
-}
-
-#sidebar .github-star {
-    margin-top: 20px;
-    margin-left: 50px;
 }
 
 #sidebar .text-muted {

@@ -1,3 +1,7 @@
+---
+currentMenu: home
+---
+
 # BlackBox
 
 BlackBox is a storage library that abstracts backends and data transformation behind simple interfaces.
