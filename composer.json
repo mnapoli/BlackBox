@@ -16,6 +16,9 @@
         "php": ">=5.4"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.0"
+        "phpunit/phpunit": "~4.0",
+        "phpseclib/phpseclib": "*",
+        "predis/predis": "~1.0",
+        "doctrine/dbal": "~2.4"
     }
 }

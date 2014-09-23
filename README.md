@@ -26,8 +26,8 @@ echo $storage->get('foo'); // Hello World!
 
 Backends implement the `StorageInterface` and store data into a backend.
 
-- MultipleFileStorage: stores data in multiple files (one file per ID).
-- ArrayStorage: stores data in an array in memory. Obviously the data is not persistent. Useful for tests.
+- `MultipleFileStorage`: stores data in multiple files (one file per ID).
+- `ArrayStorage`: stores data in an array in memory. Obviously the data is not persistent. Useful for tests.
 
 ## Transformer
 
@@ -36,9 +36,10 @@ to transform the data before storage and after retrieval.
 
 The first parameter of their constructor is the `StorageInterface` instance to wrap.
 
-- JsonEncoder: encodes data from and to JSON
-- PhpSerializerEncoder: encodes data using the PHP `serialize` function
-- ObjectArrayMapper: maps objects to arrays and vice-versa
+- `JsonEncoder`: encodes data from and to JSON
+- `PhpSerializerEncoder`: encodes data using the PHP `serialize` function
+- `ObjectArrayMapper`: maps objects to arrays and vice-versa
+- `AesEncrypter`: encrypts and decrypts data using AES encryption
 
 The beauty behind data transformers is that they can be chained:
 
