@@ -1,0 +1,16 @@
+template:
+    # The left menu bar
+    menu:
+        sections:
+            main:
+                name: Main documentation
+                items:
+                    home:
+                        text: Home
+                        relativeUrl:
+                    adapters:
+                        text: Adapters
+                        absoluteUrl: doc/adapters.html
+            other:
+                name: Other topics
+                items:
