@@ -12,7 +12,7 @@ template:
                         text: Adapters
                         relativeUrl: doc/adapters.html
             other:
-                name: Framework examples
+                name: Examples
                 items:
                     php-di:
                         text: PHP-DI

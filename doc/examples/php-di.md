@@ -4,8 +4,8 @@ currentMenu: php-di
 
 # BlackBox with [PHP-DI](http://php-di.org/)
 
-If you are using [PHP-DI](http://php-di.org/) as a dependency injection container, here is an example a
-file storage with JSON encoding:
+If you are using [PHP-DI](http://php-di.org/) as a dependency injection container, here is an example
+of configuration for a file storage with JSON encoding:
 
 ```php
 <?php
