@@ -31,6 +31,10 @@ class PhpSerializeEncoder implements StorageInterface
     {
         $data = $this->wrapped->get($id);
 
+        if ($data === null) {
+            return null;
+        }
+
         return unserialize($data);
     }
 

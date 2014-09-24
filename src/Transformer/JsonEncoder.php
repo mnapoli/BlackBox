@@ -38,6 +38,10 @@ class JsonEncoder implements StorageInterface
     {
         $data = $this->wrapped->get($id);
 
+        if ($data === null) {
+            return null;
+        }
+
         return json_decode($data);
     }
 

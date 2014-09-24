@@ -54,4 +54,17 @@ class JsonEncoderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($data, $storage->get('foo'));
     }
+
+    /**
+     * @test
+     */
+    public function it_should_handle_get_null()
+    {
+        $wrapped = new ArrayStorage();
+        $wrapped['foo'] = null;
+
+        $storage = new JsonEncoder($wrapped);
+
+        $this->assertNull($storage->get('foo'));
+    }
 }
