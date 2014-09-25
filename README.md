@@ -104,6 +104,12 @@ $object = $storage->get('foo');
 echo $object->name; // Lebowski
 ```
 
+## Collections
+
+```php
+$storage->get('foo')->set('bar', 'Hello');
+```
+
 ## License
 
 BlackBox is released under the MIT license.
