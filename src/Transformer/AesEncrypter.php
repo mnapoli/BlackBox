@@ -3,7 +3,8 @@
 namespace BlackBox\Transformer;
 
 use BlackBox\Exception\StorageException;
-use BlackBox\StorageInterface;
+use BlackBox\MapStorage;
+use BlackBox\Storage;
 use Crypt_AES;
 
 /**
@@ -11,13 +12,8 @@ use Crypt_AES;
  *
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-class AesEncrypter implements StorageInterface
+class AesEncrypter extends AbstractTransformer implements MapStorage
 {
-    /**
-     * @var StorageInterface
-     */
-    private $wrapped;
-
     /**
      * @var Crypt_AES
      */
@@ -26,12 +22,12 @@ class AesEncrypter implements StorageInterface
     /**
      * Create an instance using the default parameters for the encrypter.
      *
-     * @param StorageInterface $wrapped
-     * @param string           $encryptionKey The secret encrypt key to use.
+     * @param Storage $wrapped
+     * @param string  $encryptionKey The secret encrypt key to use.
      *
      * @return AesEncrypter
      */
-    public static function createDefault(StorageInterface $wrapped, $encryptionKey)
+    public static function createDefault(Storage $wrapped, $encryptionKey)
     {
         $encrypter = new Crypt_AES(CRYPT_AES_MODE_CBC);
         $encrypter->setKey($encryptionKey);
@@ -39,40 +35,34 @@ class AesEncrypter implements StorageInterface
         return new static($wrapped, $encrypter);
     }
 
-    public function __construct(StorageInterface $wrapped, Crypt_AES $encrypter)
+    public function __construct(Storage $wrapped, Crypt_AES $encrypter)
     {
-        $this->wrapped = $wrapped;
+        parent::__construct($wrapped);
         $this->encrypter = $encrypter;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function get($id)
+    protected function transform($data)
     {
-        $data = $this->wrapped->get($id);
-
         if ($data === null) {
             return null;
         }
 
         $this->assertIsString($data);
 
-        return $this->encrypter->decrypt($data);
+        return $this->encrypter->encrypt($data);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function set($id, $data)
+    protected function reverseTransform($data)
     {
-        if ($data !== null) {
-            $this->assertIsString($data);
+        $this->assertIsString($data);
 
-            $data = $this->encrypter->encrypt($data);
-        }
-
-        $this->wrapped->set($id, $data);
+        return $this->encrypter->decrypt($data);
     }
 
     private function assertIsString($data)

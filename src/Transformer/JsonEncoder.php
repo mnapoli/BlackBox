@@ -2,58 +2,46 @@
 
 namespace BlackBox\Transformer;
 
-use BlackBox\StorageInterface;
+use BlackBox\Storage;
+use BlackBox\MapStorage;
 
 /**
  * Encodes and decodes data into JSON.
  *
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-class JsonEncoder implements StorageInterface
+class JsonEncoder extends AbstractTransformer implements MapStorage
 {
-    /**
-     * @var StorageInterface
-     */
-    private $wrapped;
-
     /**
      * @var bool
      */
     private $pretty;
 
     /**
-     * @param StorageInterface $wrapped Wrapped storage.
-     * @param bool             $pretty  Should the JSON be formatted for being read by a human?
+     * {@inheritdoc}
+     * @param bool $pretty Should the JSON be formatted for being read by a human?
      */
-    public function __construct(StorageInterface $wrapped, $pretty = false)
+    public function __construct(Storage $wrapped, $pretty = false)
     {
-        $this->wrapped = $wrapped;
+        parent::__construct($wrapped);
         $this->pretty = $pretty;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function get($id)
+    protected function transform($data)
     {
-        $data = $this->wrapped->get($id);
+        $options = $this->pretty ? JSON_PRETTY_PRINT : 0;
 
-        if ($data === null) {
-            return null;
-        }
-
-        return json_decode($data);
+        return json_encode($data, $options);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function set($id, $data)
+    protected function reverseTransform($data)
     {
-        $options = $this->pretty ? JSON_PRETTY_PRINT : 0;
-
-        $data = json_encode($data, $options);
-
-        $this->wrapped->set($id, $data);
+        return json_decode($data);
     }
 }

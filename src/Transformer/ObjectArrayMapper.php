@@ -2,44 +2,38 @@
 
 namespace BlackBox\Transformer;
 
-use BlackBox\StorageInterface;
+use BlackBox\MapStorage;
+use BlackBox\Storage;
 
 /**
  * Maps objects to array and vice-versa.
  *
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-class ObjectArrayMapper implements StorageInterface
+class ObjectArrayMapper extends AbstractTransformer implements MapStorage
 {
-    /**
-     * @var StorageInterface
-     */
-    private $wrapped;
-
     /**
      * @var string
      */
     private $class;
 
     /**
-     * @param StorageInterface $wrapped Wrapped storage.
-     * @param string           $class   The class to which array should be mapped.
+     * {@inheritdoc}
+     * @param string $class The class to which array should be mapped.
      */
-    public function __construct(StorageInterface $wrapped, $class)
+    public function __construct(Storage $wrapped, $class)
     {
-        $this->wrapped = $wrapped;
+        parent::__construct($wrapped);
         $this->class = (string) $class;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function get($id)
+    protected function transform($data)
     {
-        $data = $this->wrapped->get($id);
-
-        if (is_array($data)) {
-            $data = $this->arrayToObject($data, $this->class);
+        if (is_object($data)) {
+            $data = $this->objectToArray($data);
         }
 
         return $data;
@@ -48,13 +42,13 @@ class ObjectArrayMapper implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function set($id, $data)
+    protected function reverseTransform($data)
     {
-        if (is_object($data)) {
-            $data = $this->objectToArray($data);
+        if (is_array($data)) {
+            $data = $this->arrayToObject($data, $this->class);
         }
 
-        $this->wrapped->set($id, $data);
+        return $data;
     }
 
     /**

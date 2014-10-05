@@ -3,14 +3,16 @@
 namespace BlackBox\Adapter;
 
 use BlackBox\Exception\StorageException;
-use BlackBox\StorageInterface;
+use BlackBox\MapStorage;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 
 /**
  * Stores data in multiple files.
  *
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-class MultipleFileStorage implements StorageInterface
+class MultipleFileStorage implements MapStorage
 {
     /**
      * @var string
@@ -23,6 +25,11 @@ class MultipleFileStorage implements StorageInterface
     private $fileExtension;
 
     /**
+     * @var FileStorage[]
+     */
+    private $files = [];
+
+    /**
      * @param string $directory     Directory in which to set the data.
      * @param string $fileExtension File extension to use (if null, no extension is used).
      *
@@ -31,7 +38,7 @@ class MultipleFileStorage implements StorageInterface
     public function __construct($directory, $fileExtension = null)
     {
         $this->directory = (string) $directory;
-        $this->fileExtension = (string) $fileExtension;
+        $this->fileExtension = ltrim($fileExtension, '.');
 
         if (! is_dir($this->directory)) {
             throw new StorageException(sprintf('The directory "%s" does not exist', $this->directory));
@@ -41,15 +48,44 @@ class MultipleFileStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function get($id)
+    public function getData()
     {
-        $filename = $this->getFilename($id);
-
-        if (! file_exists($filename)) {
-            return null;
+        $files = new Finder();
+        $files->files()->in($this->directory);
+        if ($this->fileExtension) {
+            $files->name('*.' . $this->fileExtension);
         }
 
-        return file_get_contents($filename);
+        $data = [];
+        foreach ($files as $file) {
+            /** @var SplFileInfo $file */
+            $id = $file->getFilename();
+            if ($this->fileExtension) {
+                $id = substr($id, 0, -strlen('.' . $this->fileExtension));
+            }
+
+            $data[$id] = $this->get($id);
+        }
+
+        return $data;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setData($data)
+    {
+        foreach ($data as $id => $value) {
+            $this->set($id, $value);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function get($id)
+    {
+        return $this->getFileStorage($id)->getData();
     }
 
     /**
@@ -57,9 +93,21 @@ class MultipleFileStorage implements StorageInterface
      */
     public function set($id, $data)
     {
-        $filename = $this->getFilename($id);
+        $this->getFileStorage($id)->setData($data);
+    }
 
-        file_put_contents($filename, $data);
+    /**
+     * @param string $id
+     *
+     * @return FileStorage
+     */
+    private function getFileStorage($id)
+    {
+        if (! isset($this->files[$id])) {
+            $this->files[$id] = new FileStorage($this->getFilename($id));
+        }
+
+        return $this->files[$id];
     }
 
     /**

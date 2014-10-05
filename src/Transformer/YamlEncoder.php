@@ -3,7 +3,7 @@
 namespace BlackBox\Transformer;
 
 use BlackBox\Exception\StorageException;
-use BlackBox\StorageInterface;
+use BlackBox\MapStorage;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -11,49 +11,32 @@ use Symfony\Component\Yaml\Yaml;
  *
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-class YamlEncoder implements StorageInterface
+class YamlEncoder extends AbstractTransformer implements MapStorage
 {
     /**
-     * @var StorageInterface
+     * {@inheritdoc}
      */
-    private $wrapped;
-
-    /**
-     * @param StorageInterface $wrapped Wrapped storage.
-     */
-    public function __construct(StorageInterface $wrapped)
+    protected function transform($data)
     {
-        $this->wrapped = $wrapped;
+        $this->assertIsNotObject($data);
+
+        return Yaml::dump($data);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function get($id)
+    protected function reverseTransform($data)
     {
-        $data = $this->wrapped->get($id);
-
         return Yaml::parse($data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function set($id, $data)
+    private function assertIsNotObject($data)
     {
-        $this->assertIsArray($data);
-
-        $data = Yaml::dump($data);
-
-        $this->wrapped->set($id, $data);
-    }
-
-    private function assertIsArray($data)
-    {
-        if (! is_array($data)) {
+        if (is_object($data)) {
             throw new StorageException(sprintf(
-                'The YamlEncoder can only encode arrays, %s given',
-                is_object($data) ? get_class($data) : gettype($data)
+                'The YamlEncoder cannot encode objects, %s given',
+                get_class($data)
             ));
         }
     }

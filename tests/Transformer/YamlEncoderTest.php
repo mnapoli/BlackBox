@@ -43,8 +43,21 @@ class YamlEncoderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     */
+    public function it_should_encode_primary_types()
+    {
+        $wrapped = new ArrayStorage();
+        $storage = new YamlEncoder($wrapped);
+
+        $storage->set('foo', 'bar');
+
+        $this->assertEquals('bar', $wrapped->get('foo'));
+    }
+
+    /**
+     * @test
      * @expectedException \BlackBox\Exception\StorageException
-     * @expectedExceptionMessage The YamlEncoder can only encode arrays, stdClass given
+     * @expectedExceptionMessage The YamlEncoder cannot encode objects, stdClass given
      */
     public function it_should_not_encode_objects()
     {
@@ -52,19 +65,6 @@ class YamlEncoderTest extends \PHPUnit_Framework_TestCase
         $storage = new YamlEncoder($wrapped);
 
         $storage->set('foo', new \stdClass());
-    }
-
-    /**
-     * @test
-     * @expectedException \BlackBox\Exception\StorageException
-     * @expectedExceptionMessage The YamlEncoder can only encode arrays, string given
-     */
-    public function it_should_not_encode_non_arrays()
-    {
-        $wrapped = new ArrayStorage();
-        $storage = new YamlEncoder($wrapped);
-
-        $storage->set('foo', 'bar');
     }
 
     /**

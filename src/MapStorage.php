@@ -5,11 +5,11 @@ namespace BlackBox;
 use BlackBox\Exception\StorageException;
 
 /**
- * Stores data.
+ * Stores multiple items identified by ids.
  *
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-interface StorageInterface
+interface MapStorage extends Storage
 {
     /**
      * Returns the data stored under the given ID.

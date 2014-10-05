@@ -2,49 +2,28 @@
 
 namespace BlackBox\Transformer;
 
-use BlackBox\StorageInterface;
+use BlackBox\MapStorage;
 
 /**
  * Encodes and decodes data using PHP's serialize functions.
  *
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-class PhpSerializeEncoder implements StorageInterface
+class PhpSerializeEncoder extends AbstractTransformer implements MapStorage
 {
     /**
-     * @var StorageInterface
+     * {@inheritdoc}
      */
-    private $wrapped;
-
-    /**
-     * @param StorageInterface $wrapped Wrapped storage.
-     */
-    public function __construct(StorageInterface $wrapped)
+    protected function transform($data)
     {
-        $this->wrapped = $wrapped;
+        return serialize($data);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function get($id)
+    protected function reverseTransform($data)
     {
-        $data = $this->wrapped->get($id);
-
-        if ($data === null) {
-            return null;
-        }
-
         return unserialize($data);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function set($id, $data)
-    {
-        $data = serialize($data);
-
-        $this->wrapped->set($id, $data);
     }
 }

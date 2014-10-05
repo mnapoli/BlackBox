@@ -2,7 +2,9 @@
 
 namespace BlackBox\Adapter;
 
-use BlackBox\StorageInterface;
+use BlackBox\Exception\StorageException;
+use BlackBox\MapStorage;
+use BlackBox\Storage;
 
 /**
  * Stores data in memory in an array.
@@ -11,12 +13,32 @@ use BlackBox\StorageInterface;
  *
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-class ArrayStorage implements StorageInterface, \ArrayAccess
+class ArrayStorage implements Storage, MapStorage, \ArrayAccess
 {
     /**
      * @var array
      */
     private $storage = [];
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getData()
+    {
+        return $this->storage;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setData($data)
+    {
+        if (! is_array($data)) {
+            throw new StorageException(sprintf('ArrayStorage can only store an array, %s given', gettype($data)));
+        }
+
+        $this->storage = $data;
+    }
 
     /**
      * {@inheritdoc}
