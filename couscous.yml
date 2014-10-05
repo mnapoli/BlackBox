@@ -8,6 +8,9 @@ template:
                     home:
                         text: Home
                         relativeUrl:
+                    interfaces:
+                        text: Interfaces
+                        relativeUrl: doc/interfaces.html
                     adapters:
                         text: Adapters
                         relativeUrl: doc/adapters.html

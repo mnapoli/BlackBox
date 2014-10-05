@@ -33,8 +33,9 @@ use ...;
 return [
 
     StorageInterface::class => DI\factory(function () {
-        $backend = new MultipleFileStorage('some/directory', 'json');
-        return new JsonEncoder($backend);
+        return new JsonEncoder(
+            new MultipleFileStorage('some/directory', 'json')
+        );
     }),
 
 ];

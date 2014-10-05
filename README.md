@@ -6,16 +6,36 @@ currentMenu: home
 
 BlackBox is a storage library that abstracts backends and data transformation behind simple interfaces.
 
-Store data. "Where" and "how" is a decision for later.
+Store data. "Where" and "how" can be decided later.
 
 ## Usage
 
-The `StorageInterface` is very simple to use:
+The API is defined by interfaces and is extremely simple.
+
+You can have 2 storage types:
+
+- the basic **`Storage`** interface for storing just 1 thing:
 
 ```php
 namespace BlackBox;
 
-interface StorageInterface
+interface Storage
+{
+    public function getData();
+    public function setData($data);
+}
+
+$storage->setData('Hello World!');
+
+echo $storage->getData(); // Hello World!
+```
+
+- the **`MapStorage`** interface for storing several items:
+
+```php
+namespace BlackBox;
+
+interface MapStorage extends Storage
 {
     public function get($id);
     public function set($id, $data);
@@ -28,13 +48,15 @@ echo $storage->get('foo'); // Hello World!
 
 ## Adapters
 
-Backends implement the `StorageInterface` and store data into a backend:
+Adapters are classes that implement the `Storage` or `MapStorage` interfaces.
 
-- `MultipleFileStorage`
-- `ArrayStorage`
+Backends store data into a backend:
 
-Transformers also implement the `StorageInterface`. They are wrapping another storage
-to transform the data before storage and after retrieval.
+- `ArrayStorage` (implements `MapStorage`)
+- `FileStorage` (implements `Storage`)
+- `MultipleFileStorage` (implements `MapStorage`)
+
+Transformers wrap another storage to transform the data before storage and after retrieval.
 
 - `JsonEncoder`
 - `YamlEncoder`
