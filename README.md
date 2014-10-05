@@ -6,6 +6,9 @@ currentMenu: home
 
 BlackBox is a storage library that abstracts backends and data transformation behind simple interfaces.
 
+[![Build Status](https://travis-ci.org/mnapoli/BlackBox.svg?branch=master)](https://travis-ci.org/mnapoli/BlackBox)
+[![Coverage Status](https://img.shields.io/coveralls/mnapoli/BlackBox.svg)](https://coveralls.io/r/mnapoli/BlackBox?branch=master)
+
 Store data. "Where" and "how" can be decided later.
 
 ## Usage
