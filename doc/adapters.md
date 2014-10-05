@@ -11,6 +11,40 @@ They can be of several types:
 
 ## Backends
 
+### `FileStorage`
+
+*Implements `Storage`.*
+
+Stores data in a single file.
+
+```php
+$storage = new FileStorage('some/file.txt');
+$storage->setData('Hello world!');
+```
+
+This adapter doesn't implement `MapStorage`. If you want to store multiple items, you can use the `MultipleFileStorage` (stores in several files), or use the `ArrayMapAdapter` if you prefer to have just one file. Read more about this in the [JSON single file example](examples/json-single-file.md).
+
+### `MultipleFileStorage`
+
+*Implements `Storage` and `MapStorage`.*
+
+Stores data in multiple files (one file per ID).
+
+```php
+$storage = new MultipleFileStorage('some/writable/directory', $extension = 'txt');
+```
+
+File names are constructed from the ids. If `$extension` is provided, then it is used as file extension.
+
+### `MemoryStorage`
+
+*Implements `Storage`.*
+
+Stores data in memory. Obviously the data is not persistent between requests.
+This backend can be useful for tests or quick prototyping.
+
+This adapter doesn't implement `MapStorage`. If you want a map, use `ArrayStorage`.
+
 ### `ArrayStorage`
 
 *Implements `Storage` and `MapStorage`.*
@@ -24,28 +58,6 @@ The class also implements the `ArrayAccess` interface for easy usage:
 $storage = new ArrayStorage();
 $storage['foo'] = 'bar';
 ```
-
-### `FileStorage`
-
-*Implements `Storage`.*
-
-Stores data in a single file.
-
-```php
-$storage = new FileStorage('some/file.txt');
-```
-
-### `MultipleFileStorage`
-
-*Implements `Storage` and `MapStorage`.*
-
-Stores data in multiple files (one file per ID).
-
-```php
-$storage = new MultipleFileStorage('some/writable/directory', $extension = 'txt');
-```
-
-File names are constructed from the ids. If `$extension` is provided, then it is used as file extension.
 
 ## Transformers
 
@@ -144,3 +156,26 @@ To use this adapter, you will need to install the `phpseclib`:
     }
 }
 ```
+
+### `ArrayMapAdapter`
+
+*Implements `Storage` and `MapStorage`.*
+
+This adapter transforms a `Storage` into a `MapStorage`. To do this, it stores the "map" into a PHP array.
+
+For example, if you want to store a Map into a `FileStorage` (single file):
+
+```php
+// This storage doesn't implement `MapStorage`
+$storage = new FileStorage($file);
+
+// You can now use the `MapStorage` interface
+$storage = new ArrayMapAdapter(
+    new JsonEncoder($storage)
+);
+```
+
+In this example, we need to use the `JsonEncoder` because it isn't possible to store a PHP array into a file.
+So the array will be encoded in JSON before being written to disk.
+
+Have a look at the [](examples/json-single-file.md)

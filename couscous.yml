@@ -20,6 +20,9 @@ template:
                     example_encrypted:
                         text: Encrypted file storage
                         relativeUrl: doc/examples/encrypted-files.html
+                    example_json_single_file:
+                        text: Single JSON file
+                        relativeUrl: doc/examples/json-single-file.html
                     php-di:
                         text: PHP-DI
                         relativeUrl: doc/examples/php-di.html

@@ -49,15 +49,18 @@ $storage->set('foo', 'Hello World!');
 echo $storage->get('foo'); // Hello World!
 ```
 
+You can read all about those interfaces in the [Interfaces documentation](doc/interfaces.md).
+
 ## Adapters
 
 Adapters are classes that implement the `Storage` or `MapStorage` interfaces.
 
 Backends store data into a backend:
 
-- `ArrayStorage` (implements `MapStorage`)
 - `FileStorage` (implements `Storage`)
 - `MultipleFileStorage` (implements `MapStorage`)
+- `MemoryStorage` (implements `Storage`)
+- `ArrayStorage` (implements `MapStorage`)
 
 Transformers wrap another storage to transform the data before storage and after retrieval.
 
@@ -66,6 +69,7 @@ Transformers wrap another storage to transform the data before storage and after
 - `PhpSerializerEncoder`
 - `ObjectArrayMapper`
 - `AesEncrypter`
+- `ArrayMapAdapter`
 
 You can read all about the adapters in the [Adapters documentation](doc/adapters.md).
 
