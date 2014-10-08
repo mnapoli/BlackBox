@@ -1,8 +1,8 @@
 <?php
 
-namespace Tests\BlackBox\Adapter\Db;
+namespace Tests\BlackBox\Adapter\Database;
 
-use BlackBox\Adapter\Db\DbTableStorage;
+use BlackBox\Adapter\Database\DatabaseTable;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Schema\Column;
@@ -10,9 +10,9 @@ use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 
 /**
- * @covers \BlackBox\Adapter\Db\DbTableStorage
+ * @covers \BlackBox\Adapter\Database\DatabaseTable
  */
-class DbTableStorageTest extends \PHPUnit_Framework_TestCase
+class DatabaseTableTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @test
@@ -62,7 +62,7 @@ class DbTableStorageTest extends \PHPUnit_Framework_TestCase
      * @test
      * @depends set_should_insert
      */
-    public function set_existing_row_should_update(DbTableStorage $storage)
+    public function set_existing_row_should_update(DatabaseTable $storage)
     {
         $data = [
             'name' => 'Doe',
@@ -117,7 +117,7 @@ class DbTableStorageTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return DbTableStorage
+     * @return DatabaseTable
      */
     private function assertDbTableStorage()
     {
@@ -127,7 +127,7 @@ class DbTableStorageTest extends \PHPUnit_Framework_TestCase
             'name' => 'John',
         ]);
 
-        $storage = new DbTableStorage($db, 'foo');
+        $storage = new DatabaseTable($db, 'foo');
 
         return $storage;
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace BlackBox\Adapter\Db;
+namespace BlackBox\Adapter\Database;
 
 use BlackBox\Exception\StorageException;
 use BlackBox\MapStorage;
@@ -15,7 +15,7 @@ use Doctrine\DBAL\Types\Type;
  *
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-class DbTableStorage implements MapStorage
+class DatabaseTable implements MapStorage
 {
     const COLUMN_ID = '_id';
 

@@ -1,9 +1,9 @@
 <?php
 
-namespace Tests\BlackBox\Adapter\Db;
+namespace Tests\BlackBox\Adapter\Database;
 
-use BlackBox\Adapter\Db\DbSchemaStorage;
-use BlackBox\Adapter\Db\DbTableStorage;
+use BlackBox\Adapter\Database\DatabaseSchema;
+use BlackBox\Adapter\Database\DatabaseTable;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Schema\Column;
@@ -11,20 +11,20 @@ use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 
 /**
- * @covers \BlackBox\Adapter\Db\DbSchemaStorage
+ * @covers \BlackBox\Adapter\Database\DatabaseSchema
  */
-class DbSchemaStorageTest extends \PHPUnit_Framework_TestCase
+class DatabaseSchemaTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @test
      */
     public function get_should_return_a_table_storage()
     {
-        $storage = new DbSchemaStorage($this->assert_db_connection());
+        $storage = new DatabaseSchema($this->assert_db_connection());
 
         $table = $storage->get('foo');
 
-        $this->assertTrue($table instanceof DbTableStorage);
+        $this->assertTrue($table instanceof DatabaseTable);
         $this->assertEquals('foo', $table->getTableName());
     }
 
@@ -33,7 +33,7 @@ class DbSchemaStorageTest extends \PHPUnit_Framework_TestCase
      */
     public function get_should_return_null_on_missing_table()
     {
-        $storage = new DbSchemaStorage($this->assert_db_connection());
+        $storage = new DatabaseSchema($this->assert_db_connection());
         $this->assertNull($storage->get('bar'));
     }
 
@@ -43,7 +43,7 @@ class DbSchemaStorageTest extends \PHPUnit_Framework_TestCase
     public function set_should_add_a_new_table_storage()
     {
         $connection = $this->assert_db_connection();
-        $storage = new DbSchemaStorage($connection);
+        $storage = new DatabaseSchema($connection);
 
         $storage->set('bar', []);
 
@@ -51,7 +51,7 @@ class DbSchemaStorageTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('bar', $tables);
 
         $tableStorage = $storage->get('bar');
-        $this->assertTrue($tableStorage instanceof DbTableStorage);
+        $this->assertTrue($tableStorage instanceof DatabaseTable);
         $this->assertEquals('bar', $tableStorage->getTableName());
 
         $table = $connection->getSchemaManager()->listTableDetails('bar');
@@ -68,7 +68,7 @@ class DbSchemaStorageTest extends \PHPUnit_Framework_TestCase
     public function set_null_should_drop_the_table()
     {
         $connection = $this->assert_db_connection();
-        $storage = new DbSchemaStorage($connection);
+        $storage = new DatabaseSchema($connection);
 
         $storage->set('foo', null);
 

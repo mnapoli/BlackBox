@@ -1,6 +1,6 @@
 <?php
 
-namespace BlackBox\Adapter\Db;
+namespace BlackBox\Adapter\Database;
 
 use BlackBox\Exception\StorageException;
 use BlackBox\MapStorage;
@@ -15,7 +15,7 @@ use Doctrine\DBAL\Types\Type;
  *
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-class DbSchemaStorage implements MapStorage
+class DatabaseSchema implements MapStorage
 {
     /**
      * @var Connection
@@ -23,7 +23,7 @@ class DbSchemaStorage implements MapStorage
     private $connection;
 
     /**
-     * @var DbTableStorage[]
+     * @var DatabaseTable[]
      */
     private $tables = [];
 
@@ -61,7 +61,7 @@ class DbSchemaStorage implements MapStorage
     /**
      * {@inheritdoc}
      *
-     * @return DbTableStorage
+     * @return DatabaseTable
      */
     public function get($id)
     {
@@ -70,7 +70,7 @@ class DbSchemaStorage implements MapStorage
         }
 
         if (! isset($this->tables[$id])) {
-            $this->tables[$id] = new DbTableStorage($this->connection, $id);
+            $this->tables[$id] = new DatabaseTable($this->connection, $id);
         }
 
         return $this->tables[$id];
@@ -78,7 +78,7 @@ class DbSchemaStorage implements MapStorage
 
     /**
      * {@inheritdoc}
-     * @param DbTableStorage|array|null $data
+     * @param DatabaseTable|array|null $data
      */
     public function set($id, $data)
     {
@@ -132,9 +132,9 @@ class DbSchemaStorage implements MapStorage
     {
         try {
             $table = new Table($id, [
-                new Column(DbTableStorage::COLUMN_ID, Type::getType(Type::STRING)),
+                new Column(DatabaseTable::COLUMN_ID, Type::getType(Type::STRING)),
             ]);
-            $table->setPrimaryKey([DbTableStorage::COLUMN_ID]);
+            $table->setPrimaryKey([DatabaseTable::COLUMN_ID]);
 
             $this->getSchema()->createTable($table);
         } catch (DBALException $e) {
