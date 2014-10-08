@@ -5,6 +5,7 @@ namespace BlackBox\Adapter\Db;
 use BlackBox\Exception\StorageException;
 use BlackBox\MapStorage;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\TableDiff;
 use Doctrine\DBAL\Types\Type;
@@ -44,7 +45,11 @@ class DbTableStorage implements MapStorage
             $this->connection->quoteIdentifier($this->tableName)
         );
 
-        $rows = $this->connection->fetchAll($query);
+        try {
+            $rows = $this->connection->fetchAll($query);
+        } catch (DBALException $e) {
+            throw DatabaseException::fromDBALException($e);
+        }
 
         $data = [];
 
@@ -59,9 +64,11 @@ class DbTableStorage implements MapStorage
 
     /**
      * {@inheritdoc}
+     * @param array $data
      */
     public function setData($data)
     {
+        // TODO Optimize
         foreach ($data as $id => $value) {
             $this->set($id, $value);
         }
@@ -78,7 +85,11 @@ class DbTableStorage implements MapStorage
             $this->connection->quoteIdentifier(self::COLUMN_ID)
         );
 
-        $row = $this->connection->fetchAssoc($query, [$id]);
+        try {
+            $row = $this->connection->fetchAssoc($query, [$id]);
+        } catch (DBALException $e) {
+            throw DatabaseException::fromDBALException($e);
+        }
 
         if ($row === false) {
             return null;
@@ -99,15 +110,19 @@ class DbTableStorage implements MapStorage
 
         $data = $this->quoteColumns($data);
 
-        $this->createMissingColumns($data);
+        try {
+            $this->createMissingColumns($data);
 
-        if (! $this->hasRow($id)) {
-            // Insert
-            $data[self::COLUMN_ID] = $id;
-            $this->connection->insert($this->tableName, $data);
-        } else {
-            // Update
-            $this->connection->update($this->tableName, $data, [self::COLUMN_ID => $id]);
+            if (! $this->hasRow($id)) {
+                // Insert
+                $data[self::COLUMN_ID] = $id;
+                $this->connection->insert($this->tableName, $data);
+            } else {
+                // Update
+                $this->connection->update($this->tableName, $data, [self::COLUMN_ID => $id]);
+            }
+        } catch (DBALException $e) {
+            throw DatabaseException::fromDBALException($e);
         }
     }
 
