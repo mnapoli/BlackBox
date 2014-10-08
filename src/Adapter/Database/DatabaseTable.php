@@ -2,7 +2,6 @@
 
 namespace BlackBox\Adapter\Database;
 
-use BlackBox\Exception\StorageException;
 use BlackBox\MapStorage;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
@@ -194,7 +193,7 @@ class DatabaseTable implements MapStorage
                     $type = Type::STRING;
                     break;
                 default:
-                    throw new StorageException(sprintf(
+                    throw new DatabaseException(sprintf(
                         'Unable to create a new column "%s" in table %s because variables of type %s can\'t be handled',
                         $this->tableName,
                         $key,

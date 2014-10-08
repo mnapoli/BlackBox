@@ -2,7 +2,6 @@
 
 namespace BlackBox\Adapter\Database;
 
-use BlackBox\Exception\StorageException;
 use BlackBox\MapStorage;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
