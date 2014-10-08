@@ -61,6 +61,7 @@ Backends store data into a backend:
 - `MultipleFileStorage` (implements `MapStorage`)
 - `MemoryStorage` (implements `Storage`)
 - `ArrayStorage` (implements `MapStorage`)
+- `DatabaseTable` (implements `MapStorage`)
 
 Transformers wrap another storage to transform the data before storage and after retrieval.
 
