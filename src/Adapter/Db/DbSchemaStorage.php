@@ -5,6 +5,7 @@ namespace BlackBox\Adapter\Db;
 use BlackBox\Exception\StorageException;
 use BlackBox\MapStorage;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
@@ -77,6 +78,7 @@ class DbSchemaStorage implements MapStorage
 
     /**
      * {@inheritdoc}
+     * @param DbTableStorage|array|null $data
      */
     public function set($id, $data)
     {
@@ -85,18 +87,10 @@ class DbSchemaStorage implements MapStorage
             return;
         }
 
-        if ($this->hasTable($id)) {
-            throw new StorageException(sprintf('The table "%s" already exist', $id));
-        }
+        $this->assertTableDoesNotExist($id);
+        $this->createTable($id);
 
-        $table = new Table($id, [
-            new Column(DbTableStorage::COLUMN_ID, Type::getType(Type::STRING)),
-        ]);
-        $table->setPrimaryKey([DbTableStorage::COLUMN_ID]);
-
-        $this->getSchema()->createTable($table);
-
-        // TODO add data to the table
+        $this->get($id)->setData($data);
     }
 
     private function hasTable($name)
@@ -124,6 +118,27 @@ class DbSchemaStorage implements MapStorage
 
         if (isset($this->tables[$name])) {
             unset($this->tables[$name]);
+        }
+    }
+
+    private function assertTableDoesNotExist($name)
+    {
+        if ($this->hasTable($name)) {
+            throw new DatabaseException(sprintf('The table "%s" already exist', $name));
+        }
+    }
+
+    private function createTable($id)
+    {
+        try {
+            $table = new Table($id, [
+                new Column(DbTableStorage::COLUMN_ID, Type::getType(Type::STRING)),
+            ]);
+            $table->setPrimaryKey([DbTableStorage::COLUMN_ID]);
+
+            $this->getSchema()->createTable($table);
+        } catch (DBALException $e) {
+            throw DatabaseException::fromDBALException($e);
         }
     }
 }
