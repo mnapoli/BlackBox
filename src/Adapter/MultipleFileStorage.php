@@ -41,7 +41,13 @@ class MultipleFileStorage implements MapStorage
         $this->fileExtension = ltrim($fileExtension, '.');
 
         if (! is_dir($this->directory)) {
-            throw new StorageException(sprintf('The directory "%s" does not exist', $this->directory));
+            $success = mkdir($this->directory);
+            if (! $success) {
+                throw new StorageException(sprintf(
+                    'The directory "%s" does not exist and cannot be created',
+                    $this->directory
+                ));
+            }
         }
     }
 
