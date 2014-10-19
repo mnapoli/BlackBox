@@ -42,6 +42,6 @@ class JsonEncoder extends AbstractTransformer implements MapStorage
      */
     protected function reverseTransform($data)
     {
-        return json_decode($data);
+        return json_decode($data, true);
     }
 }

@@ -58,6 +58,21 @@ class JsonEncoderTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function it_should_decode_indexed_array_to_array()
+    {
+        $data = ['foo' => 'bar'];
+
+        $wrapped = new ArrayStorage();
+        $wrapped['foo'] = json_encode($data);
+
+        $storage = new JsonEncoder($wrapped);
+
+        $this->assertEquals($data, $storage->get('foo'));
+    }
+
+    /**
+     * @test
+     */
     public function it_should_handle_get_null()
     {
         $wrapped = new ArrayStorage();
