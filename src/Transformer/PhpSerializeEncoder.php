@@ -2,19 +2,17 @@
 
 namespace BlackBox\Transformer;
 
-use BlackBox\MapStorage;
-
 /**
  * Encodes and decodes data using PHP's serialize functions.
  *
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-class PhpSerializeEncoder extends AbstractTransformer implements MapStorage
+class PhpSerializeEncoder implements Transformer
 {
     /**
      * {@inheritdoc}
      */
-    protected function transform($data)
+    public function transform($data)
     {
         return serialize($data);
     }
@@ -22,8 +20,12 @@ class PhpSerializeEncoder extends AbstractTransformer implements MapStorage
     /**
      * {@inheritdoc}
      */
-    protected function reverseTransform($data)
+    public function reverseTransform($data)
     {
+        if ($data === null) {
+            return null;
+        }
+
         return unserialize($data);
     }
 }

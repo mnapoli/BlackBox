@@ -3,7 +3,6 @@
 namespace BlackBox\Transformer;
 
 use BlackBox\Exception\StorageException;
-use BlackBox\MapStorage;
 use BlackBox\Storage;
 use Crypt_AES;
 
@@ -12,7 +11,7 @@ use Crypt_AES;
  *
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-class AesEncrypter extends AbstractTransformer implements MapStorage
+class AesEncrypter implements Transformer
 {
     /**
      * @var Crypt_AES
@@ -35,16 +34,15 @@ class AesEncrypter extends AbstractTransformer implements MapStorage
         return new static($wrapped, $encrypter);
     }
 
-    public function __construct(Storage $wrapped, Crypt_AES $encrypter)
+    public function __construct(Crypt_AES $encrypter)
     {
-        parent::__construct($wrapped);
         $this->encrypter = $encrypter;
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function transform($data)
+    public function transform($data)
     {
         if ($data === null) {
             return null;
@@ -58,8 +56,12 @@ class AesEncrypter extends AbstractTransformer implements MapStorage
     /**
      * {@inheritdoc}
      */
-    protected function reverseTransform($data)
+    public function reverseTransform($data)
     {
+        if ($data === null) {
+            return null;
+        }
+
         $this->assertIsString($data);
 
         return $this->encrypter->decrypt($data);

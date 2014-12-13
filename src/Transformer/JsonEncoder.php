@@ -2,15 +2,12 @@
 
 namespace BlackBox\Transformer;
 
-use BlackBox\Storage;
-use BlackBox\MapStorage;
-
 /**
  * Encodes and decodes data into JSON.
  *
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-class JsonEncoder extends AbstractTransformer implements MapStorage
+class JsonEncoder implements Transformer
 {
     /**
      * @var bool
@@ -18,19 +15,17 @@ class JsonEncoder extends AbstractTransformer implements MapStorage
     private $pretty;
 
     /**
-     * {@inheritdoc}
      * @param bool $pretty Should the JSON be formatted for being read by a human?
      */
-    public function __construct(Storage $wrapped, $pretty = false)
+    public function __construct($pretty = false)
     {
-        parent::__construct($wrapped);
         $this->pretty = $pretty;
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function transform($data)
+    public function transform($data)
     {
         $options = $this->pretty ? JSON_PRETTY_PRINT : 0;
 
@@ -40,8 +35,12 @@ class JsonEncoder extends AbstractTransformer implements MapStorage
     /**
      * {@inheritdoc}
      */
-    protected function reverseTransform($data)
+    public function reverseTransform($data)
     {
+        if ($data === null) {
+            return null;
+        }
+
         return json_decode($data, true);
     }
 }
