@@ -9,7 +9,7 @@ use BlackBox\Exception\StorageException;
  *
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-interface MapStorage extends Storage
+interface MapStorage
 {
     /**
      * Returns the data stored under the given ID.

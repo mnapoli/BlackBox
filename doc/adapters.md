@@ -4,12 +4,7 @@ currentMenu: adapters
 
 Adapters are classes that implement the `Storage` or `MapStorage` interfaces.
 
-They can be of several types:
-
-- **backend**: the implementation for a specific storage backend
-- **transformer**: wraps another `Storage` or `MapStorage` to transform the data before storage and after retrieval
-
-## Backends
+## Adapters
 
 ### `FileStorage`
 
@@ -26,7 +21,7 @@ This adapter doesn't implement `MapStorage`. If you want to store multiple items
 
 ### `MultipleFileStorage`
 
-*Implements `Storage` and `MapStorage`.*
+*Implements `MapStorage`.*
 
 Stores data in multiple files (one file per ID).
 
@@ -47,17 +42,10 @@ This adapter doesn't implement `MapStorage`. If you want a map, use `ArrayStorag
 
 ### `ArrayStorage`
 
-*Implements `Storage` and `MapStorage`.*
+*Implements `MapStorage`.*
 
 Stores data in an array in memory. Obviously the data is not persistent between requests.
 This backend can be useful for tests or quick prototyping.
-
-The class also implements the `ArrayAccess` interface for easy usage:
-
-```php
-$storage = new ArrayStorage();
-$storage['foo'] = 'bar';
-```
 
 ## Transformers
 

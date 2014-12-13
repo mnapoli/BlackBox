@@ -2,15 +2,12 @@
 
 namespace BlackBox\Transformer;
 
-use BlackBox\MapStorage;
-use BlackBox\Storage;
-
 /**
  * Maps objects to array and vice-versa.
  *
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-class ObjectArrayMapper extends AbstractTransformer implements MapStorage
+class ObjectArrayMapper implements Transformer
 {
     /**
      * @var string
@@ -18,19 +15,17 @@ class ObjectArrayMapper extends AbstractTransformer implements MapStorage
     private $class;
 
     /**
-     * {@inheritdoc}
      * @param string $class The class to which array should be mapped.
      */
-    public function __construct(Storage $wrapped, $class)
+    public function __construct($class)
     {
-        parent::__construct($wrapped);
         $this->class = (string) $class;
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function transform($data)
+    public function transform($data)
     {
         if (is_object($data)) {
             $data = $this->objectToArray($data);
@@ -42,7 +37,7 @@ class ObjectArrayMapper extends AbstractTransformer implements MapStorage
     /**
      * {@inheritdoc}
      */
-    protected function reverseTransform($data)
+    public function reverseTransform($data)
     {
         if (is_array($data)) {
             $data = $this->arrayToObject($data, $this->class);
