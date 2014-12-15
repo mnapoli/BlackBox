@@ -15,17 +15,36 @@ use Doctrine\DBAL\Types\Type;
 class DatabaseTableTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * @var Connection
+     */
+    private $connection;
+
+    /**
+     * @var DatabaseTable
+     */
+    private $storage;
+
+    public function setUp()
+    {
+        $this->connection = $this->createDbConnection();
+        $this->connection->insert('foo', [
+            '_id'  => '1',
+            'name' => 'John',
+        ]);
+
+        $this->storage = new DatabaseTable($this->connection, 'foo');
+    }
+
+    /**
      * @test
      */
     public function get_should_return_a_row()
     {
-        $storage = $this->assertDbTableStorage();
-
         $expected = [
             'name' => 'John',
         ];
 
-        $this->assertEquals($expected, $storage->get('1'));
+        $this->assertEquals($expected, $this->storage->get('1'));
     }
 
     /**
@@ -33,9 +52,7 @@ class DatabaseTableTest extends \PHPUnit_Framework_TestCase
      */
     public function get_missing_row_should_return_null()
     {
-        $storage = $this->assertDbTableStorage();
-
-        $this->assertNull($storage->get('2'));
+        $this->assertNull($this->storage->get('2'));
     }
 
     /**
@@ -43,33 +60,29 @@ class DatabaseTableTest extends \PHPUnit_Framework_TestCase
      */
     public function set_should_insert()
     {
-        $storage = $this->assertDbTableStorage();
-
         $data = [
             'name' => 'John',
         ];
-        $storage->set('2', $data);
+        $this->storage->set('2', $data);
 
-        $row = $storage->getDbConnection()->fetchAssoc('SELECT * FROM foo WHERE _id = "2"');
+        $row = $this->connection->fetchAssoc('SELECT * FROM foo WHERE _id = "2"');
 
         $data['_id'] = '2';
         $this->assertEquals($data, $row);
-
-        return $storage;
     }
 
     /**
      * @test
      * @depends set_should_insert
      */
-    public function set_existing_row_should_update(DatabaseTable $storage)
+    public function set_existing_row_should_update()
     {
         $data = [
             'name' => 'Doe',
         ];
-        $storage->set('2', $data);
+        $this->storage->set('2', $data);
 
-        $row = $storage->getDbConnection()->fetchAssoc('SELECT * FROM foo WHERE _id = "2"');
+        $row = $this->connection->fetchAssoc('SELECT * FROM foo WHERE _id = "2"');
 
         $data['_id'] = '2';
         $this->assertEquals($data, $row);
@@ -80,14 +93,12 @@ class DatabaseTableTest extends \PHPUnit_Framework_TestCase
      */
     public function set_new_column_should_create_it()
     {
-        $storage = $this->assertDbTableStorage();
-
         $data = [
             'email' => 'john@microsoft.com',
         ];
-        $storage->set('2', $data);
+        $this->storage->set('2', $data);
 
-        $row = $storage->getDbConnection()->fetchAssoc('SELECT * FROM foo WHERE _id = "2"');
+        $row = $this->connection->fetchAssoc('SELECT * FROM foo WHERE _id = "2"');
 
         $data['_id'] = '2';
         $data['name'] = null;
@@ -99,14 +110,12 @@ class DatabaseTableTest extends \PHPUnit_Framework_TestCase
      */
     public function set_should_escape_array_keys()
     {
-        $storage = $this->assertDbTableStorage();
-
         $data = [
             'hax0r\' foo' => 'hax0r" foo',
         ];
-        $storage->set('2', $data);
+        $this->storage->set('2', $data);
 
-        $row = $storage->getDbConnection()->fetchAssoc('SELECT * FROM foo WHERE _id = "2"');
+        $row = $this->connection->fetchAssoc('SELECT * FROM foo WHERE _id = "2"');
 
         $expected = [
             '_id' => '2',
@@ -117,25 +126,32 @@ class DatabaseTableTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return DatabaseTable
+     * @test
      */
-    private function assertDbTableStorage()
+    public function it_should_be_traversable()
     {
-        $db = $this->assertDbConnection();
-        $db->insert('foo', [
-            '_id'  => '1',
-            'name' => 'John',
+        $this->storage->set('2', [
+            'email' => 'john@microsoft.com',
         ]);
 
-        $storage = new DatabaseTable($db, 'foo');
+        $expected = [
+            1 => [
+                'name' => 'John',
+                'email' => null,
+            ],
+            2 => [
+                'name' => null,
+                'email' => 'john@microsoft.com',
+            ],
+        ];
 
-        return $storage;
+        $this->assertEquals($expected, iterator_to_array($this->storage));
     }
 
     /**
      * @return Connection
      */
-    private function assertDbConnection()
+    private function createDbConnection()
     {
         $connection = DriverManager::getConnection([
             'driver' => 'pdo_sqlite',

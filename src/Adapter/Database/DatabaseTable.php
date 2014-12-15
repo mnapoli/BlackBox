@@ -2,19 +2,21 @@
 
 namespace BlackBox\Adapter\Database;
 
+use ArrayIterator;
 use BlackBox\MapStorage;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\TableDiff;
 use Doctrine\DBAL\Types\Type;
+use IteratorAggregate;
 
 /**
  * Stores data in a database table.
  *
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-class DatabaseTable implements MapStorage
+class DatabaseTable implements IteratorAggregate, MapStorage
 {
     const COLUMN_ID = '_id';
 
@@ -32,45 +34,6 @@ class DatabaseTable implements MapStorage
     {
         $this->connection = $connection;
         $this->tableName = (string) $tableName;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getData()
-    {
-        $query = sprintf(
-            'SELECT * FROM %s',
-            $this->connection->quoteIdentifier($this->tableName)
-        );
-
-        try {
-            $rows = $this->connection->fetchAll($query);
-        } catch (DBALException $e) {
-            throw DatabaseException::fromDBALException($e);
-        }
-
-        $data = [];
-
-        foreach ($rows as $row) {
-            $id = $row[self::COLUMN_ID];
-
-            $data[$id] = $this->rowToData($row);
-        }
-
-        return $data;
-    }
-
-    /**
-     * {@inheritdoc}
-     * @param array $data
-     */
-    public function setData($data)
-    {
-        // TODO Optimize
-        foreach ($data as $id => $value) {
-            $this->set($id, $value);
-        }
     }
 
     /**
@@ -123,6 +86,34 @@ class DatabaseTable implements MapStorage
         } catch (DBALException $e) {
             throw DatabaseException::fromDBALException($e);
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIterator()
+    {
+        // TODO optimize
+        $query = sprintf(
+            'SELECT * FROM %s',
+            $this->connection->quoteIdentifier($this->tableName)
+        );
+
+        try {
+            $rows = $this->connection->fetchAll($query);
+        } catch (DBALException $e) {
+            throw DatabaseException::fromDBALException($e);
+        }
+
+        $data = [];
+
+        foreach ($rows as $row) {
+            $id = $row[self::COLUMN_ID];
+
+            $data[$id] = $this->rowToData($row);
+        }
+
+        return new ArrayIterator($data);
     }
 
     /**

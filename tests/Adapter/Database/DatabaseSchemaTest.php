@@ -16,13 +16,34 @@ use Doctrine\DBAL\Types\Type;
 class DatabaseSchemaTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * @var Connection
+     */
+    private $connection;
+
+    /**
+     * @var DatabaseSchema
+     */
+    private $storage;
+
+    public function setUp()
+    {
+        $this->connection = DriverManager::getConnection([
+            'driver' => 'pdo_sqlite',
+            'memory' => true,
+        ]);
+        $this->connection->getSchemaManager()->createTable(new Table('foo', [
+            new Column('_id', Type::getType(Type::STRING)),
+        ]));
+
+        $this->storage = new DatabaseSchema($this->connection);
+    }
+
+    /**
      * @test
      */
     public function get_should_return_a_table_storage()
     {
-        $storage = new DatabaseSchema($this->assert_db_connection());
-
-        $table = $storage->get('foo');
+        $table = $this->storage->get('foo');
 
         $this->assertTrue($table instanceof DatabaseTable);
         $this->assertEquals('foo', $table->getTableName());
@@ -33,8 +54,7 @@ class DatabaseSchemaTest extends \PHPUnit_Framework_TestCase
      */
     public function get_should_return_null_on_missing_table()
     {
-        $storage = new DatabaseSchema($this->assert_db_connection());
-        $this->assertNull($storage->get('bar'));
+        $this->assertNull($this->storage->get('bar'));
     }
 
     /**
@@ -42,19 +62,16 @@ class DatabaseSchemaTest extends \PHPUnit_Framework_TestCase
      */
     public function set_should_add_a_new_table_storage()
     {
-        $connection = $this->assert_db_connection();
-        $storage = new DatabaseSchema($connection);
+        $this->storage->set('bar', new DatabaseTable($this->connection, 'bar'));
 
-        $storage->set('bar', []);
-
-        $tables = $connection->getSchemaManager()->listTableNames();
+        $tables = $this->connection->getSchemaManager()->listTableNames();
         $this->assertContains('bar', $tables);
 
-        $tableStorage = $storage->get('bar');
+        $tableStorage = $this->storage->get('bar');
         $this->assertTrue($tableStorage instanceof DatabaseTable);
         $this->assertEquals('bar', $tableStorage->getTableName());
 
-        $table = $connection->getSchemaManager()->listTableDetails('bar');
+        $table = $this->connection->getSchemaManager()->listTableDetails('bar');
         $columns = $table->getColumns();
         $this->assertCount(1, $columns);
         $column = current($columns);
@@ -65,34 +82,23 @@ class DatabaseSchemaTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function set_null_should_drop_the_table()
+    public function it_should_be_traversable()
     {
-        $connection = $this->assert_db_connection();
-        $storage = new DatabaseSchema($connection);
-
-        $storage->set('foo', null);
-
-        $tables = $connection->getSchemaManager()->listTableNames();
-        $this->assertEmpty($tables);
-        $this->assertNull($storage->get('foo'));
+        $array = iterator_to_array($this->storage);
+        $this->assertCount(1, $array);
+        $this->assertArrayHasKey('foo', $array);
+        $this->assertTrue($array['foo'] instanceof DatabaseTable);
     }
 
     /**
-     * @return Connection
+     * @test
      */
-    private function assert_db_connection()
+    public function set_null_should_drop_the_table()
     {
-        $connection = DriverManager::getConnection([
-            'driver' => 'pdo_sqlite',
-            'memory' => true,
-        ]);
+        $this->storage->set('foo', null);
 
-        $table = new Table('foo', [
-            new Column('_id', Type::getType(Type::STRING)),
-        ]);
-
-        $connection->getSchemaManager()->createTable($table);
-
-        return $connection;
+        $tables = $this->connection->getSchemaManager()->listTableNames();
+        $this->assertEmpty($tables);
+        $this->assertNull($this->storage->get('foo'));
     }
 }

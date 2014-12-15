@@ -2,19 +2,21 @@
 
 namespace BlackBox\Adapter\Database;
 
+use ArrayIterator;
 use BlackBox\MapStorage;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
+use IteratorAggregate;
 
 /**
  * Database schema.
  *
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-class DatabaseSchema implements MapStorage
+class DatabaseSchema implements IteratorAggregate, MapStorage
 {
     /**
      * @var Connection
@@ -29,32 +31,6 @@ class DatabaseSchema implements MapStorage
     public function __construct(Connection $connection)
     {
         $this->connection = $connection;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getData()
-    {
-        $tables = $this->getTableNames();
-
-        $data = [];
-
-        foreach ($tables as $table) {
-            $data[$table] = $this->get($table);
-        }
-
-        return $data;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setData($data)
-    {
-        foreach ($data as $id => $value) {
-            $this->set($id, $value);
-        }
     }
 
     /**
@@ -77,6 +53,7 @@ class DatabaseSchema implements MapStorage
 
     /**
      * {@inheritdoc}
+     *
      * @param DatabaseTable|array|null $data
      */
     public function set($id, $data)
@@ -86,10 +63,22 @@ class DatabaseSchema implements MapStorage
             return;
         }
 
+        if (! $data instanceof DatabaseTable) {
+            throw new \InvalidArgumentException('You can only set DatabaseTable objects in a DatabaseSchema');
+        }
+
         $this->assertTableDoesNotExist($id);
         $this->createTable($id);
 
-        $this->get($id)->setData($data);
+        $this->tables[$id] = $data;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIterator()
+    {
+        return new ArrayIterator($this->getTables());
     }
 
     private function hasTable($name)
@@ -139,5 +128,21 @@ class DatabaseSchema implements MapStorage
         } catch (DBALException $e) {
             throw DatabaseException::fromDBALException($e);
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTables()
+    {
+        $tables = $this->getTableNames();
+
+        $data = [];
+
+        foreach ($tables as $table) {
+            $data[$table] = $this->get($table);
+        }
+
+        return $data;
     }
 }
