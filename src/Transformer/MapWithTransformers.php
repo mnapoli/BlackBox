@@ -3,11 +3,12 @@
 namespace BlackBox\Transformer;
 
 use BlackBox\MapStorage;
+use IteratorAggregate;
 
 /**
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-class MapWithTransformers implements MapStorage
+class MapWithTransformers implements IteratorAggregate, MapStorage
 {
     /**
      * @var MapStorage
@@ -47,6 +48,14 @@ class MapWithTransformers implements MapStorage
         $data = $this->transform($data);
 
         $this->storage->set($id, $data);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIterator()
+    {
+        return $this->storage;
     }
 
     public function addTransformer(Transformer $transformer)

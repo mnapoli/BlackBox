@@ -2,7 +2,9 @@
 
 namespace BlackBox\Adapter;
 
+use ArrayIterator;
 use BlackBox\MapStorage;
+use IteratorAggregate;
 
 /**
  * Stores data in memory in an array.
@@ -11,7 +13,7 @@ use BlackBox\MapStorage;
  *
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-class ArrayStorage implements MapStorage
+class ArrayStorage implements IteratorAggregate, MapStorage
 {
     /**
      * @var array
@@ -36,5 +38,13 @@ class ArrayStorage implements MapStorage
     public function set($id, $data)
     {
         $this->storage[$id] = $data;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIterator()
+    {
+        return new ArrayIterator($this->storage);
     }
 }

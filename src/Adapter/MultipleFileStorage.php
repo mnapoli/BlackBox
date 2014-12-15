@@ -2,15 +2,19 @@
 
 namespace BlackBox\Adapter;
 
+use ArrayIterator;
 use BlackBox\Exception\StorageException;
 use BlackBox\MapStorage;
+use IteratorAggregate;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 
 /**
  * Stores data in multiple files.
  *
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-class MultipleFileStorage implements MapStorage
+class MultipleFileStorage implements IteratorAggregate, MapStorage
 {
     /**
      * @var string
@@ -66,6 +70,14 @@ class MultipleFileStorage implements MapStorage
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getIterator()
+    {
+        return new ArrayIterator($this->getAll());
+    }
+
+    /**
      * @param string $id
      *
      * @return FileStorage
@@ -92,5 +104,30 @@ class MultipleFileStorage implements MapStorage
 
         // TODO escape the ID
         return $this->directory . '/' . $id . $extension;
+    }
+
+    /**
+     * @return array Get all entries as an array.
+     */
+    private function getAll()
+    {
+        $files = new Finder();
+        $files->files()->in($this->directory);
+        if ($this->fileExtension) {
+            $files->name('*.' . $this->fileExtension);
+        }
+
+        $data = [];
+        foreach ($files as $file) {
+            /** @var SplFileInfo $file */
+            $id = $file->getFilename();
+            if ($this->fileExtension) {
+                $id = substr($id, 0, -strlen('.' . $this->fileExtension));
+            }
+
+            $data[$id] = $this->get($id);
+        }
+
+        return $data;
     }
 }

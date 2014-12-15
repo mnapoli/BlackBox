@@ -3,13 +3,14 @@
 namespace BlackBox;
 
 use BlackBox\Exception\StorageException;
+use Traversable;
 
 /**
  * Stores multiple items identified by ids.
  *
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-interface MapStorage
+interface MapStorage extends Traversable
 {
     /**
      * Returns the data stored under the given ID.
