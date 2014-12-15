@@ -42,7 +42,7 @@ The `MapStorage` interface defines storages that can store data as a [map/dictio
 It can contain multiple items and these items are indexed by an ID.
 
 ```php
-interface MapStorage extends Storage
+interface MapStorage
 {
     /**
      * Returns the data stored under the given ID.

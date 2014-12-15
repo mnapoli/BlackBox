@@ -2,7 +2,6 @@
 
 namespace Tests\BlackBox\Transformer;
 
-use BlackBox\Adapter\ArrayStorage;
 use BlackBox\Transformer\AesEncrypter;
 use Crypt_AES;
 
@@ -12,20 +11,32 @@ use Crypt_AES;
 class AesEncrypterTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * @var AesEncrypter
+     */
+    private $transformer;
+
+    /**
+     * @var Crypt_AES
+     */
+    private $encrypter;
+
+    public function setUp()
+    {
+        $this->encrypter = new Crypt_AES(CRYPT_AES_MODE_CBC);
+        $this->encrypter->setKey('foo');
+
+        $this->transformer = new AesEncrypter($this->encrypter);
+    }
+    /**
      * @test
      */
     public function it_should_encrypt()
     {
-        $encrypter = $this->given_an_encrypter();
-
-        $wrapped = new ArrayStorage();
-        $storage = new AesEncrypter($wrapped, $encrypter);
-
         $data = 'Hello world!';
 
-        $storage->set('foo', $data);
+        $encrypted = $this->transformer->transform($data);
 
-        $this->assertEquals($data, $encrypter->decrypt($wrapped->get('foo')));
+        $this->assertEquals($data, $this->encrypter->decrypt($encrypted));
     }
 
     /**
@@ -33,12 +44,9 @@ class AesEncrypterTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_not_encrypt_null()
     {
-        $wrapped = new ArrayStorage();
-        $storage = new AesEncrypter($wrapped, $this->given_an_encrypter());
+        $encrypted = $this->transformer->transform(null);
 
-        $storage->set('foo', null);
-
-        $this->assertNull($wrapped->get('foo'));
+        $this->assertNull($encrypted);
     }
 
     /**
@@ -46,16 +54,10 @@ class AesEncrypterTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_decrypt()
     {
-        $encrypter = $this->given_an_encrypter();
-
         $data = 'Hello world!';
+        $encrypted = $this->encrypter->encrypt($data);
 
-        $wrapped = new ArrayStorage();
-        $wrapped['foo'] = $encrypter->encrypt($data);
-
-        $storage = new AesEncrypter($wrapped, $encrypter);
-
-        $this->assertEquals($data, $storage->get('foo'));
+        $this->assertEquals($data, $this->transformer->reverseTransform($encrypted));
     }
 
     /**
@@ -63,11 +65,7 @@ class AesEncrypterTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_not_decrypt_null()
     {
-        $wrapped = new ArrayStorage();
-        $wrapped['foo'] = null;
-        $storage = new AesEncrypter($wrapped, $this->given_an_encrypter());
-
-        $this->assertNull($storage->get('foo'));
+        $this->assertNull($this->transformer->reverseTransform(null));
     }
 
     /**
@@ -77,10 +75,7 @@ class AesEncrypterTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_fail_with_non_strings()
     {
-        $wrapped = new ArrayStorage();
-        $storage = new AesEncrypter($wrapped, $this->given_an_encrypter());
-
-        $storage->set('foo', 123);
+        $this->transformer->reverseTransform(123);
     }
 
     /**
@@ -90,17 +85,6 @@ class AesEncrypterTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_fail_with_objects()
     {
-        $wrapped = new ArrayStorage();
-        $storage = new AesEncrypter($wrapped, $this->given_an_encrypter());
-
-        $storage->set('foo', new \stdClass());
-    }
-
-    private function given_an_encrypter()
-    {
-        $encrypter = new Crypt_AES(CRYPT_AES_MODE_CBC);
-        $encrypter->setKey('foo');
-
-        return $encrypter;
+        $this->transformer->reverseTransform(new \stdClass());
     }
 }

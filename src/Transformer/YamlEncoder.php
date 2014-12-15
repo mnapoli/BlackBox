@@ -3,7 +3,6 @@
 namespace BlackBox\Transformer;
 
 use BlackBox\Exception\StorageException;
-use BlackBox\MapStorage;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -11,12 +10,12 @@ use Symfony\Component\Yaml\Yaml;
  *
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-class YamlEncoder extends AbstractTransformer implements MapStorage
+class YamlEncoder implements Transformer
 {
     /**
      * {@inheritdoc}
      */
-    protected function transform($data)
+    public function transform($data)
     {
         $this->assertIsNotObject($data);
 
@@ -26,8 +25,12 @@ class YamlEncoder extends AbstractTransformer implements MapStorage
     /**
      * {@inheritdoc}
      */
-    protected function reverseTransform($data)
+    public function reverseTransform($data)
     {
+        if ($data === null) {
+            return null;
+        }
+
         return Yaml::parse($data);
     }
 

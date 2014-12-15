@@ -38,7 +38,7 @@ echo $storage->getData(); // Hello World!
 ```php
 namespace BlackBox;
 
-interface MapStorage extends Storage
+interface MapStorage
 {
     public function get($id);
     public function set($id, $data);
@@ -53,9 +53,7 @@ You can read all about those interfaces in the [Interfaces documentation](doc/in
 
 ## Adapters
 
-Adapters are classes that implement the `Storage` or `MapStorage` interfaces.
-
-Backends store data into a backend:
+Adapters are classes that implement the `Storage` or `MapStorage` interfaces:
 
 - `FileStorage` (implements `Storage`)
 - `MultipleFileStorage` (implements `MapStorage`)
@@ -63,31 +61,46 @@ Backends store data into a backend:
 - `ArrayStorage` (implements `MapStorage`)
 - `DatabaseTable` (implements `MapStorage`)
 
-Transformers wrap another storage to transform the data before storage and after retrieval.
+You can read all about the adapters in the [Adapters documentation](doc/adapters.md).
+
+## Transformers
+
+Transformers transform data before storage and after retrieval:
 
 - `JsonEncoder`
 - `YamlEncoder`
 - `PhpSerializerEncoder`
 - `ObjectArrayMapper`
 - `AesEncrypter`
-- `ArrayMapAdapter`
 
-You can read all about the adapters in the [Adapters documentation](doc/adapters.md).
+To use transformers, you need to use `StorageWithTransformers` or `MapWithTransformers`:
 
-## Advanced usage
+```php
+$storage = new StorageWithTransformers(
+    new FileStorage('data.json')
+);
+$storage->addTransformer(new JsonEncoder());
 
-The beauty behind data transformers is that they can be chained:
+$storage->setData('Hello World!');
+echo $storage->getData();
+```
+
+In this example, we use the JsonEncoder to encode data in JSON before storing it into the `data.json` file. The transformer will also decode the data when it is read with `$storage->getData()`.
+
+You can of course use several transformers to solve complex use cases.
 
 ```php
 // Store data in files
-$storage = new MultipleFileStorage('some/directory');
+$storage = new StorageWithTransformers(
+    new MultipleFileStorage('some/directory')
+);
 
-// Wrap the storage to encode the data in JSON
-$storage = new JsonEncoder($storage);
-
-// Wrap the storage to map objects to array and vice-versa
+// Map objects to array and vice-versa
 // (because JSON can't deserialize arrays into PHP objects of a specific class)
-$storage = new ObjectArrayMapper($storage, 'MyClass');
+$storage->addTransformer(new ObjectArrayMapper('MyClass'));
+
+// Encode the data in JSON
+$storage->addTransformer(new JsonEncoder());
 
 $object = new MyClass();
 $object->name = 'Lebowski';

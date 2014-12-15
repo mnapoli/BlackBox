@@ -4,8 +4,6 @@ namespace BlackBox\Adapter;
 
 use BlackBox\Exception\StorageException;
 use BlackBox\MapStorage;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 
 /**
  * Stores data in multiple files.
@@ -41,42 +39,13 @@ class MultipleFileStorage implements MapStorage
         $this->fileExtension = ltrim($fileExtension, '.');
 
         if (! is_dir($this->directory)) {
-            throw new StorageException(sprintf('The directory "%s" does not exist', $this->directory));
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getData()
-    {
-        $files = new Finder();
-        $files->files()->in($this->directory);
-        if ($this->fileExtension) {
-            $files->name('*.' . $this->fileExtension);
-        }
-
-        $data = [];
-        foreach ($files as $file) {
-            /** @var SplFileInfo $file */
-            $id = $file->getFilename();
-            if ($this->fileExtension) {
-                $id = substr($id, 0, -strlen('.' . $this->fileExtension));
+            $success = mkdir($this->directory);
+            if (! $success) {
+                throw new StorageException(sprintf(
+                    'The directory "%s" does not exist and cannot be created',
+                    $this->directory
+                ));
             }
-
-            $data[$id] = $this->get($id);
-        }
-
-        return $data;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setData($data)
-    {
-        foreach ($data as $id => $value) {
-            $this->set($id, $value);
         }
     }
 

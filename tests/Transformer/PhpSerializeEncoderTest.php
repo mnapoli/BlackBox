@@ -2,7 +2,6 @@
 
 namespace Tests\BlackBox\Transformer;
 
-use BlackBox\Adapter\ArrayStorage;
 use BlackBox\Transformer\PhpSerializeEncoder;
 
 /**
@@ -11,33 +10,37 @@ use BlackBox\Transformer\PhpSerializeEncoder;
 class PhpSerializeEncoderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @test
+     * @var PhpSerializeEncoder
      */
-    public function it_should_serialize()
+    private $transformer;
+
+    public function setUp()
     {
-        $wrapped = new ArrayStorage();
-        $storage = new PhpSerializeEncoder($wrapped);
-
-        $data = ['bar', 123, new \stdClass()];
-
-        $storage->set('foo', $data);
-
-        $this->assertEquals(serialize($data), $wrapped->get('foo'));
+        $this->transformer = new PhpSerializeEncoder();
     }
 
     /**
      * @test
      */
-    public function it_should_unserialize()
+    public function it_should_serialize_data()
     {
         $data = ['bar', 123, new \stdClass()];
 
-        $wrapped = new ArrayStorage();
-        $wrapped['foo'] = serialize($data);
+        $transformed = $this->transformer->transform($data);
 
-        $storage = new PhpSerializeEncoder($wrapped);
+        $this->assertEquals(serialize($data), $transformed);
+    }
 
-        $this->assertEquals($data, $storage->get('foo'));
+    /**
+     * @test
+     */
+    public function it_should_unserialize_data()
+    {
+        $data = ['bar', 123, new \stdClass()];
+
+        $decoded = $this->transformer->reverseTransform(serialize($data));
+
+        $this->assertEquals($data, $decoded);
     }
 
     /**
@@ -45,11 +48,6 @@ class PhpSerializeEncoderTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_handle_get_null()
     {
-        $wrapped = new ArrayStorage();
-        $wrapped['foo'] = null;
-
-        $storage = new PhpSerializeEncoder($wrapped);
-
-        $this->assertNull($storage->get('foo'));
+        $this->assertNull($this->transformer->reverseTransform(null));
     }
 }

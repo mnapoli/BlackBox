@@ -30,22 +30,6 @@ class MultipleFileStorageTest extends \PHPUnit_Framework_TestCase
      * @test
      * @dataProvider extensionProvider
      */
-    public function it_should_store_data($extension)
-    {
-        $storage = new MultipleFileStorage($this->directory, $extension);
-
-        $storage->setData([
-            'foo' => 'bar',
-        ]);
-
-        $this->assertDataStoredInFile('bar', 'foo', $extension);
-        $this->assertEquals([ 'foo' => 'bar' ], $storage->getData());
-    }
-
-    /**
-     * @test
-     * @dataProvider extensionProvider
-     */
     public function it_should_store_data_as_map($extension)
     {
         $storage = new MultipleFileStorage($this->directory, $extension);
