@@ -40,6 +40,21 @@ class MultipleFileStorageTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('bar', $storage->get('foo'));
     }
 
+    /**
+     * @test
+     * @dataProvider extensionProvider
+     */
+    public function it_should_be_traversable($extension)
+    {
+        $storage = new MultipleFileStorage($this->directory, $extension);
+
+        $this->assertEquals([], iterator_to_array($storage));
+
+        $storage->set('foo', 'bar');
+
+        $this->assertEquals([ 'foo' => 'bar' ], iterator_to_array($storage));
+    }
+
     public function extensionProvider()
     {
         return [
