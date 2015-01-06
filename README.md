@@ -90,7 +90,7 @@ You can of course use several transformers to solve complex use cases.
 
 ```php
 // Store data in files
-$storage = new StorageWithTransformers(
+$storage = new MapWithTransformers(
     new MultipleFileStorage('some/directory')
 );
 
