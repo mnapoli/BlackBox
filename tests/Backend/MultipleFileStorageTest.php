@@ -2,12 +2,12 @@
 
 namespace Tests\BlackBox\Transformer;
 
-use BlackBox\Adapter\MultipleFileStorage;
+use BlackBox\Backend\MultipleFileStorage;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
 /**
- * @covers \BlackBox\Adapter\MultipleFileStorage
+ * @covers \BlackBox\Backend\MultipleFileStorage
  */
 class MultipleFileStorageTest extends \PHPUnit_Framework_TestCase
 {

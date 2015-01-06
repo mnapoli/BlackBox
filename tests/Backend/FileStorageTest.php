@@ -2,10 +2,10 @@
 
 namespace Tests\BlackBox\Transformer;
 
-use BlackBox\Adapter\FileStorage;
+use BlackBox\Backend\FileStorage;
 
 /**
- * @covers \BlackBox\Adapter\FileStorage
+ * @covers \BlackBox\Backend\FileStorage
  */
 class FileStorageTest extends \PHPUnit_Framework_TestCase
 {

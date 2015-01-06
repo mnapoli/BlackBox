@@ -51,16 +51,16 @@ echo $storage->get('foo'); // Hello World!
 
 You can read all about those interfaces in the [Interfaces documentation](doc/interfaces.md).
 
-## Adapters
+## Backends
 
-Adapters are classes that implement the `Storage` or `MapStorage` interfaces:
+Backends are classes that implement the `Storage` or `MapStorage` interfaces:
 
 - `FileStorage` (implements `Storage`)
 - `MultipleFileStorage` (implements `MapStorage`)
 - `MemoryStorage` (implements `Storage`)
 - `ArrayStorage` (implements `MapStorage`)
 
-You can read all about the adapters in the [Adapters documentation](doc/adapters.md).
+You can read all about the backends in the [Backends documentation](doc/backends.md).
 
 ## Transformers
 

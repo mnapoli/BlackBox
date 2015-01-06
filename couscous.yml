@@ -11,9 +11,9 @@ template:
                     interfaces:
                         text: Interfaces
                         relativeUrl: doc/interfaces.html
-                    adapters:
-                        text: Adapters
-                        relativeUrl: doc/adapters.html
+                    backends:
+                        text: Backends
+                        relativeUrl: doc/backends.html
             other:
                 name: Examples
                 items:

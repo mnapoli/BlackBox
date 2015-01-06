@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\BlackBox\Adapter;
+namespace Tests\BlackBox\Backend;
 
-use BlackBox\Adapter\ArrayStorage;
+use BlackBox\Backend\ArrayStorage;
 
 /**
- * @covers \BlackBox\Adapter\ArrayStorage
+ * @covers \BlackBox\Backend\ArrayStorage
  */
 class ArrayStorageTest extends \PHPUnit_Framework_TestCase
 {

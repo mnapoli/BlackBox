@@ -1,10 +1,10 @@
 ---
-currentMenu: adapters
+currentMenu: backends
 ---
 
-Adapters are classes that implement the `Storage` or `MapStorage` interfaces.
+Backends are classes that implement the `Storage` or `MapStorage` interfaces.
 
-## Adapters
+## Backends
 
 ### `FileStorage`
 
@@ -16,8 +16,6 @@ Stores data in a single file.
 $storage = new FileStorage('some/file.txt');
 $storage->setData('Hello world!');
 ```
-
-This adapter doesn't implement `MapStorage`. If you want to store multiple items, you can use the `MultipleFileStorage` (stores in several files), or use the `ArrayMapAdapter` if you prefer to have just one file. Read more about this in the [JSON single file example](examples/json-single-file.md).
 
 ### `MultipleFileStorage`
 
@@ -38,8 +36,6 @@ File names are constructed from the ids. If `$extension` is provided, then it is
 Stores data in memory. Obviously the data is not persistent between requests.
 This backend can be useful for tests or quick prototyping.
 
-This adapter doesn't implement `MapStorage`. If you want a map, use `ArrayStorage`.
-
 ### `ArrayStorage`
 
 *Implements `MapStorage`.*
@@ -50,8 +46,6 @@ This backend can be useful for tests or quick prototyping.
 ## Transformers
 
 ### `JsonEncoder`
-
-*Implements `Storage` and `MapStorage`.*
 
 Encodes data from and to JSON.
 
@@ -64,15 +58,13 @@ If `$pretty` is true, then the JSON will be formatted to be human readable (fals
 
 ### `YamlEncoder`
 
-*Implements `Storage` and `MapStorage`.*
-
 Encodes data from and to YAML.
 
 ```php
 $storage = new YamlEncoder($otherStorage);
 ```
 
-To use this adapter, you will need to install the `Symfony\YAML` component:
+To use this transformer, you will need to install the `Symfony\YAML` component:
 
 ```json
 {
@@ -84,8 +76,6 @@ To use this adapter, you will need to install the `Symfony\YAML` component:
 
 ### `PhpSerializerEncoder`
 
-*Implements `Storage` and `MapStorage`.*
-
 Encodes data using the PHP `serialize` function.
 
 ```php
@@ -93,8 +83,6 @@ $storage = new PhpSerializerEncoder($otherStorage);
 ```
 
 ### `ObjectArrayMapper`
-
-*Implements `Storage` and `MapStorage`.*
 
 Maps objects to arrays and vice-versa.
 
@@ -119,8 +107,6 @@ values from the array.
 
 ### `AesEncrypter`
 
-*Implements `Storage` and `MapStorage`.*
-
 Encrypts and decrypts data using AES encryption.
 
 ```php
@@ -135,7 +121,7 @@ $storage = AesEncrypter::createDefault($otherStorage, $encryptionKey);
 
 Remember to store the encryption key securely!
 
-To use this adapter, you will need to install the `phpseclib`:
+To use this transformer, you will need to install the `phpseclib`:
 
 ```json
 {
@@ -146,8 +132,6 @@ To use this adapter, you will need to install the `phpseclib`:
 ```
 
 ### `ArrayMapAdapter`
-
-*Implements `Storage` and `MapStorage`.*
 
 This adapter transforms a `Storage` into a `MapStorage`. To do this, it stores the "map" into a PHP array.
 
