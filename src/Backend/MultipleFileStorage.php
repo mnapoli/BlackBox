@@ -102,8 +102,7 @@ class MultipleFileStorage implements IteratorAggregate, MapStorage
     {
         $extension = $this->fileExtension ? '.' . $this->fileExtension : '';
 
-        // TODO escape the ID
-        return $this->directory . '/' . $id . $extension;
+        return $this->directory . '/' . $this->encodeFilename($id) . $extension;
     }
 
     /**
@@ -129,5 +128,14 @@ class MultipleFileStorage implements IteratorAggregate, MapStorage
         }
 
         return $data;
+    }
+
+    private function encodeFilename($filename)
+    {
+        $filename = urlencode($filename);
+        $filename = str_replace('.', '%2E', $filename);
+        $filename = str_replace('-', '%2D', $filename);
+
+        return $filename;
     }
 }
