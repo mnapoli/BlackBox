@@ -1,6 +1,6 @@
 <?php
 
-namespace BlackBox\Adapter\Database;
+namespace BlackBox\Backend\Database;
 
 use BlackBox\Exception\StorageException;
 use Doctrine\DBAL\DBALException;

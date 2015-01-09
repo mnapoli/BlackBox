@@ -1,6 +1,6 @@
 <?php
 
-namespace BlackBox\Adapter\Database;
+namespace BlackBox\Backend\Database;
 
 use ArrayIterator;
 use BlackBox\MapStorage;

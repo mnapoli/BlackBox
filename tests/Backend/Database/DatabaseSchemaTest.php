@@ -1,9 +1,9 @@
 <?php
 
-namespace Tests\BlackBox\Adapter\Database;
+namespace Tests\BlackBox\Backend\Database;
 
-use BlackBox\Adapter\Database\DatabaseSchema;
-use BlackBox\Adapter\Database\DatabaseTable;
+use BlackBox\Backend\Database\DatabaseSchema;
+use BlackBox\Backend\Database\DatabaseTable;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Schema\Column;
@@ -11,7 +11,7 @@ use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 
 /**
- * @covers \BlackBox\Adapter\Database\DatabaseSchema
+ * @covers \BlackBox\Backend\Database\DatabaseSchema
  */
 class DatabaseSchemaTest extends \PHPUnit_Framework_TestCase
 {
@@ -62,13 +62,13 @@ class DatabaseSchemaTest extends \PHPUnit_Framework_TestCase
      */
     public function set_should_add_a_new_table_storage()
     {
-        $this->storage->set('bar', new DatabaseTable($this->connection, 'bar'));
+        $this->storage->set('bar', new \BlackBox\Backend\Database\DatabaseTable($this->connection, 'bar'));
 
         $tables = $this->connection->getSchemaManager()->listTableNames();
         $this->assertContains('bar', $tables);
 
         $tableStorage = $this->storage->get('bar');
-        $this->assertTrue($tableStorage instanceof DatabaseTable);
+        $this->assertTrue($tableStorage instanceof \BlackBox\Backend\Database\DatabaseTable);
         $this->assertEquals('bar', $tableStorage->getTableName());
 
         $table = $this->connection->getSchemaManager()->listTableDetails('bar');

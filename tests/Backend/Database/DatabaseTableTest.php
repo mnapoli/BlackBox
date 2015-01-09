@@ -1,8 +1,8 @@
 <?php
 
-namespace Tests\BlackBox\Adapter\Database;
+namespace Tests\BlackBox\Backend\Database;
 
-use BlackBox\Adapter\Database\DatabaseTable;
+use BlackBox\Backend\Database\DatabaseTable;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Schema\Column;
@@ -10,7 +10,7 @@ use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 
 /**
- * @covers \BlackBox\Adapter\Database\DatabaseTable
+ * @covers \BlackBox\Backend\Database\DatabaseTable
  */
 class DatabaseTableTest extends \PHPUnit_Framework_TestCase
 {
