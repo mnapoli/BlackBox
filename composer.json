@@ -21,6 +21,7 @@
         "phpseclib/phpseclib": "*",
         "symfony/yaml": "~2.6",
         "doctrine/dbal": "~2.4",
-        "symfony/filesystem": "~2.6"
+        "symfony/filesystem": "~2.6",
+        "jms/serializer": "~0.15"
     }
 }

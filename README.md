@@ -51,6 +51,22 @@ echo $storage->get('foo'); // Hello World!
 
 You can read all about those interfaces in the [Interfaces documentation](doc/interfaces.md).
 
+## Features
+
+BlackBox can store data in:
+
+- files
+- memory/arrays
+
+Data can be:
+
+- stored in JSON
+- stored in YAML
+- serialized using PHP's `serialize()` function
+- encrypted with AES
+
+An integration with the [JMS Serializer](http://jmsyst.com/libs/serializer) library also allows to serialize PHP objects to JSON, XML or YAML.
+
 ## Backends
 
 Backends are classes that implement the `Storage` or `MapStorage` interfaces:
@@ -71,6 +87,7 @@ Transformers transform data before storage and after retrieval:
 - `PhpSerializerEncoder`
 - `ObjectArrayMapper`
 - `AesEncrypter`
+- `JmsSerializer` for using the [JMS Serializer library](http://jmsyst.com/libs/serializer)
 
 To use transformers, you need to use `StorageWithTransformers` or `MapWithTransformers`:
 

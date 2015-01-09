@@ -131,23 +131,21 @@ To use this transformer, you will need to install the `phpseclib`:
 }
 ```
 
-### `ArrayMapAdapter`
+### `JmsSerializer`
 
-This adapter transforms a `Storage` into a `MapStorage`. To do this, it stores the "map" into a PHP array.
+[JMS Serializer library](http://jmsyst.com/libs/serializer) integration to serialize objects to string (JSON, XML or YAML).
 
-For example, if you want to store a Map into a `FileStorage` (single file):
+Example:
 
 ```php
-// This storage doesn't implement `MapStorage`
-$storage = new FileStorage($file);
+// Create and configure the JMS Serializer
+$jmsSerializer = SerializerBuilder::create()->build();
 
-// You can now use the `MapStorage` interface
-$storage = new ArrayMapAdapter(
-    new JsonEncoder($storage)
-);
+// The JMS serializer could then be used like this:
+// $serializer->deserialize($jsonData, 'MyNamespace\MyObject', 'json');
+
+// So we create our transformer like this:
+$transformer = new JmsSerializer($jmsSerializer, 'json', 'MyNamespace\MyObject');
 ```
 
-In this example, we need to use the `JsonEncoder` because it isn't possible to store a PHP array into a file.
-So the array will be encoded in JSON before being written to disk.
-
-Have a look at the [](examples/json-single-file.md)
+See the [JMS Serializer](http://jmsyst.com/libs/serializer) documentation to learn how to configure it.
