@@ -1,9 +1,10 @@
 <?php
 
-namespace BlackBox\Transformer;
+namespace BlackBox\Adapter;
 
 use ArrayIterator;
 use BlackBox\MapStorage;
+use BlackBox\Transformer\Transformer;
 use IteratorAggregate;
 
 /**

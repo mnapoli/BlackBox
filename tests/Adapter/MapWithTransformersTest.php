@@ -1,13 +1,13 @@
 <?php
 
-namespace Tests\BlackBox\Transformer;
+namespace Tests\BlackBox\Adapter;
 
 use BlackBox\Backend\ArrayStorage;
 use BlackBox\Transformer\JsonEncoder;
-use BlackBox\Transformer\MapWithTransformers;
+use BlackBox\Adapter\MapWithTransformers;
 
 /**
- * @covers \BlackBox\Transformer\MapWithTransformers
+ * @covers \BlackBox\Adapter\MapWithTransformers
  */
 class MapWithTransformersTest extends \PHPUnit_Framework_TestCase
 {
@@ -17,7 +17,7 @@ class MapWithTransformersTest extends \PHPUnit_Framework_TestCase
     public function set_should_use_transformers()
     {
         $backend = new ArrayStorage;
-        $storage = new MapWithTransformers($backend);
+        $storage = new \BlackBox\Adapter\MapWithTransformers($backend);
         $storage->addTransformer(new JsonEncoder);
 
         $storage->set('foo', 'bar');
@@ -46,7 +46,7 @@ class MapWithTransformersTest extends \PHPUnit_Framework_TestCase
     public function traversable_should_use_transformers()
     {
         $backend = new ArrayStorage;
-        $storage = new MapWithTransformers($backend);
+        $storage = new \BlackBox\Adapter\MapWithTransformers($backend);
         $storage->addTransformer(new JsonEncoder);
 
         $this->assertEquals([], iterator_to_array($storage));
