@@ -58,4 +58,20 @@ class RedisTest extends \PHPUnit_Framework_TestCase
         $this->storage->set('foo', null);
         $this->assertSame(null, $this->storage->get('foo'));
     }
+
+    /**
+     * @test
+     */
+    public function it_should_be_iterable()
+    {
+        $this->storage->set('foo', 'test 1');
+        $this->storage->set('bar', 'test 2');
+
+        $expected = [
+            'foo' => 'test 1',
+            'bar' => 'test 2',
+        ];
+
+        $this->assertEquals($expected, iterator_to_array($this->storage));
+    }
 }
