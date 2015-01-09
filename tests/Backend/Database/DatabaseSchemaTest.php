@@ -62,13 +62,13 @@ class DatabaseSchemaTest extends \PHPUnit_Framework_TestCase
      */
     public function set_should_add_a_new_table_storage()
     {
-        $this->storage->set('bar', new \BlackBox\Backend\Database\DatabaseTable($this->connection, 'bar'));
+        $this->storage->set('bar', new DatabaseTable($this->connection, 'bar'));
 
         $tables = $this->connection->getSchemaManager()->listTableNames();
         $this->assertContains('bar', $tables);
 
         $tableStorage = $this->storage->get('bar');
-        $this->assertTrue($tableStorage instanceof \BlackBox\Backend\Database\DatabaseTable);
+        $this->assertTrue($tableStorage instanceof DatabaseTable);
         $this->assertEquals('bar', $tableStorage->getTableName());
 
         $table = $this->connection->getSchemaManager()->listTableDetails('bar');

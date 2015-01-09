@@ -54,7 +54,7 @@ class DatabaseSchema implements IteratorAggregate, MapStorage
     /**
      * {@inheritdoc}
      *
-     * @param DatabaseTable|array|null $data
+     * @param DatabaseTable|null $data
      */
     public function set($id, $data)
     {
