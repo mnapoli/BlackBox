@@ -128,6 +128,25 @@ class DatabaseTableTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function set_null_should_delete_row()
+    {
+        $this->storage->set('1', null);
+
+        $row = $this->connection->fetchAssoc('SELECT * FROM foo WHERE _id = "1"');
+        $this->assertFalse($row);
+    }
+
+    /**
+     * @test
+     */
+    public function set_null_on_unknown_id_should_not_throw_an_exception()
+    {
+        $this->storage->set('123', null);
+    }
+
+    /**
+     * @test
+     */
     public function it_should_be_traversable()
     {
         $this->storage->set('2', [

@@ -66,8 +66,8 @@ class DatabaseTable implements IteratorAggregate, MapStorage
     public function set($id, $data)
     {
         if ($data === null) {
-            // TODO
-            throw new \RuntimeException('TODO');
+            $this->connection->delete($this->tableName, [self::COLUMN_ID => $id]);
+            return;
         }
 
         $data = $this->quoteColumns($data);
