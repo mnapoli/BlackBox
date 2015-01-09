@@ -154,11 +154,11 @@ class DatabaseTableTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $expected = [
-            1 => [
+            '1' => [
                 'name' => 'John',
                 'email' => null,
             ],
-            2 => [
+            '2' => [
                 'name' => null,
                 'email' => 'john@microsoft.com',
             ],
