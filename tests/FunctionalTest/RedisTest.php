@@ -25,8 +25,11 @@ class RedisTest extends \PHPUnit_Framework_TestCase
             $redis->ping();
         } catch (ConnectionException $e) {
             $this->markTestSkipped('Impossible to connect to Redis at tcp://127.0.0.1:6379');
+            return;
         }
-        $this->storage = RedisStorage::create();
+        // Clear the current db
+        $redis->flushdb();
+        $this->storage = new RedisStorage($redis);
     }
 
     /**
@@ -43,7 +46,7 @@ class RedisTest extends \PHPUnit_Framework_TestCase
      */
     public function get_non_existent_key_should_return_null()
     {
-        $this->assertSame(null, $this->storage->get(uniqid()));
+        $this->assertSame(null, $this->storage->get('foo'));
     }
 
     /**
