@@ -43,7 +43,7 @@ class RedisTest extends \PHPUnit_Framework_TestCase
      */
     public function get_non_existent_key_should_return_null()
     {
-        $this->assertSame(null, $this->storage->get('foo'));
+        $this->assertSame(null, $this->storage->get(uniqid()));
     }
 
     /**

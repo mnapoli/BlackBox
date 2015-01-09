@@ -56,6 +56,7 @@ class RedisStorage implements IteratorAggregate, MapStorage
     {
         if ($data === null) {
             $this->redis->del([$id]);
+            return;
         }
 
         $this->redis->set($id, $data);
