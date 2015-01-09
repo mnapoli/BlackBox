@@ -38,7 +38,7 @@ echo $storage->getData(); // Hello World!
 ```php
 namespace BlackBox;
 
-interface MapStorage
+interface MapStorage extends Traversable
 {
     public function get($id);
     public function set($id, $data);
@@ -47,6 +47,11 @@ interface MapStorage
 $storage->set('foo', 'Hello World!');
 
 echo $storage->get('foo'); // Hello World!
+
+foreach ($storage as $key => $item) {
+    echo $key; // foo
+    echo $item; // Hello World!
+}
 ```
 
 You can read all about those interfaces in the [Interfaces documentation](doc/interfaces.md).
