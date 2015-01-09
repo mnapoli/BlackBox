@@ -55,6 +55,52 @@ $storage = new RedisStorage($redis);
 
 Check out the [Predis documentation](https://github.com/nrk/predis) for more information on the connection parameters.
 
+## `DatabaseTable`
+
+*Implements `MapStorage`.*
+
+Stores data in a Database table. This backend relies on the [**Doctrine DBAL**](http://docs.doctrine-project.org/projects/doctrine-dbal/en/latest/) library, a powerful Database Abstraction Layer which allows to connect to MySQL, PostgreSQL, SQLite, Oracle, …
+
+This backend is actually composed of two classes:
+
+- `DatabaseSchema`: map to retrieve (or create) database tables
+- `DatabaseTable`: store and retrieve table rows
+
+Both classes implement `MapStorage`.
+
+You can use `DatabaseTable` alone or use `DatabaseSchema` to create and retrieve table instances.
+
+To use this backend, you need to install the Doctrine DBAL library:
+
+```
+composer require doctrine/dbal
+```
+
+Here is a simple example using a MySQL server:
+
+```php
+$dbal = DriverManager::getConnection([
+    'dbname'   => 'my_database',
+    'user'     => 'user',
+    'password' => 'secret',
+    'host'     => 'localhost',
+    'driver'   => 'pdo_mysql',
+]);
+$dbStorage = new DatabaseSchema($dbal);
+
+// Returns the 'users' table
+$userStorage = $dbStorage->get('users');
+
+$userStorage->set('johndoe', $johnDoe);
+$user = $userStorage->get('johndoe');
+```
+
+Each table contains a `_id` string primary key. Be aware that BlackBox is not meant to be a full database abstraction layer: you cannot use auto-increment, you cannot perform SQL queries, …
+
+Note also that the Database storage backend *is not an ORM*. You cannot store objects directly in a `TableStorage`, you can only store arrays containing primitive types. You can however use transformers to turn objects into arrays (and vice-versa when data is retrieved).
+
+See all the configuration options in the [DBAL configuration documentation](http://docs.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/configuration.html).
+
 ## `MemoryStorage`
 
 *Implements `Storage`.*
