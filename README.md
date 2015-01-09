@@ -63,6 +63,7 @@ You can read all about those interfaces in the [Interfaces documentation](doc/in
 BlackBox can store data in:
 
 - files
+- [Redis](http://redis.io/)
 - memory/arrays
 
 Data can be:
@@ -80,6 +81,7 @@ Backends are classes that implement the `Storage` or `MapStorage` interfaces:
 
 - `FileStorage` (implements `Storage`)
 - `MultipleFileStorage` (implements `MapStorage`)
+- `RedisStorage` (implements `MapStorage`)
 - `MemoryStorage` (implements `Storage`)
 - `ArrayStorage` (implements `MapStorage`)
 
