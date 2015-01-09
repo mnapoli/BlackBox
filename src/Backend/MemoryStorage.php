@@ -1,6 +1,6 @@
 <?php
 
-namespace BlackBox\Adapter;
+namespace BlackBox\Backend;
 
 use BlackBox\Storage;
 

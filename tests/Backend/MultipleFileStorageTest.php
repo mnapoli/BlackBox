@@ -2,12 +2,12 @@
 
 namespace Tests\BlackBox\Transformer;
 
-use BlackBox\Adapter\MultipleFileStorage;
+use BlackBox\Backend\MultipleFileStorage;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
 /**
- * @covers \BlackBox\Adapter\MultipleFileStorage
+ * @covers \BlackBox\Backend\MultipleFileStorage
  */
 class MultipleFileStorageTest extends \PHPUnit_Framework_TestCase
 {
@@ -72,6 +72,21 @@ class MultipleFileStorageTest extends \PHPUnit_Framework_TestCase
         $storage = new MultipleFileStorage($this->directory);
 
         $this->assertNull($storage->get('foo'));
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_handle_special_characters()
+    {
+        $storage = new MultipleFileStorage($this->directory);
+
+        $filename = '../foo-bar.hello\world!';
+
+        $storage->set($filename, 'Test');
+
+        $this->assertDataStoredInFile('Test', '%2E%2E%2Ffoo%2Dbar%2Ehello%5Cworld%21', '');
+        $this->assertEquals('Test', $storage->get($filename));
     }
 
     private function clearDirectory($directory)

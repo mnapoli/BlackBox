@@ -1,8 +1,9 @@
 <?php
 
-namespace BlackBox\Transformer;
+namespace BlackBox\Adapter;
 
 use BlackBox\Storage;
+use BlackBox\Transformer\Transformer;
 
 /**
  * @author Matthieu Napoli <matthieu@mnapoli.fr>

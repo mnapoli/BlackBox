@@ -6,8 +6,10 @@ currentMenu: home
 
 BlackBox is a storage library that abstracts backends and data transformation behind simple interfaces.
 
-[![Build Status](https://travis-ci.org/mnapoli/BlackBox.svg?branch=master)](https://travis-ci.org/mnapoli/BlackBox)
-[![Coverage Status](https://img.shields.io/coveralls/mnapoli/BlackBox.svg)](https://coveralls.io/r/mnapoli/BlackBox?branch=master)
+[![Build Status](https://img.shields.io/travis/mnapoli/BlackBox.svg?style=flat-square)](https://travis-ci.org/mnapoli/BlackBox)
+[![Coverage Status](https://img.shields.io/coveralls/mnapoli/BlackBox/master.svg?style=flat-square)](https://coveralls.io/r/mnapoli/BlackBox?branch=master)
+[![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/mnapoli/BlackBox.svg?style=flat-square)](https://scrutinizer-ci.com/g/mnapoli/BlackBox/?branch=master)
+[![Latest Version](https://img.shields.io/github/release/mnapoli/BlackBox.svg?style=flat-square)](https://packagist.org/packages/mnapoli/BlackBox)
 
 Store data. "Where" and "how" can be decided later.
 
@@ -38,7 +40,7 @@ echo $storage->getData(); // Hello World!
 ```php
 namespace BlackBox;
 
-interface MapStorage
+interface MapStorage extends Traversable
 {
     public function get($id);
     public function set($id, $data);
@@ -47,21 +49,44 @@ interface MapStorage
 $storage->set('foo', 'Hello World!');
 
 echo $storage->get('foo'); // Hello World!
+
+foreach ($storage as $key => $item) {
+    echo $key; // foo
+    echo $item; // Hello World!
+}
 ```
 
 You can read all about those interfaces in the [Interfaces documentation](doc/interfaces.md).
 
-## Adapters
+## Features
 
-Adapters are classes that implement the `Storage` or `MapStorage` interfaces:
+BlackBox can store data in:
+
+- files
+- [Redis](http://redis.io/)
+- memory/arrays
+
+Data can be:
+
+- stored in JSON
+- stored in YAML
+- serialized using PHP's `serialize()` function
+- encrypted with AES
+
+An integration with the [JMS Serializer](http://jmsyst.com/libs/serializer) library also allows to serialize PHP objects to JSON, XML or YAML.
+
+## Backends
+
+Backends are classes that implement the `Storage` or `MapStorage` interfaces:
 
 - `FileStorage` (implements `Storage`)
 - `MultipleFileStorage` (implements `MapStorage`)
+- `RedisStorage` (implements `MapStorage`)
 - `MemoryStorage` (implements `Storage`)
 - `ArrayStorage` (implements `MapStorage`)
 - `DatabaseTable` (implements `MapStorage`)
 
-You can read all about the adapters in the [Adapters documentation](doc/adapters.md).
+You can read all about backends in the [Backends documentation](doc/backends.md).
 
 ## Transformers
 
@@ -72,6 +97,9 @@ Transformers transform data before storage and after retrieval:
 - `PhpSerializerEncoder`
 - `ObjectArrayMapper`
 - `AesEncrypter`
+- `JmsSerializer` for using the [JMS Serializer library](http://jmsyst.com/libs/serializer)
+
+You can read all about transformers in the [Transformers documentation](doc/transformers.md).
 
 To use transformers, you need to use `StorageWithTransformers` or `MapWithTransformers`:
 
@@ -91,7 +119,7 @@ You can of course use several transformers to solve complex use cases.
 
 ```php
 // Store data in files
-$storage = new StorageWithTransformers(
+$storage = new MapWithTransformers(
     new MultipleFileStorage('some/directory')
 );
 

@@ -1,8 +1,10 @@
 <?php
 
-namespace BlackBox\Transformer;
+namespace BlackBox\Adapter;
 
+use ArrayIterator;
 use BlackBox\MapStorage;
+use BlackBox\Transformer\Transformer;
 use IteratorAggregate;
 
 /**
@@ -55,7 +57,14 @@ class MapWithTransformers implements IteratorAggregate, MapStorage
      */
     public function getIterator()
     {
-        return $this->storage;
+        // TODO optimize
+        $array = iterator_to_array($this->storage);
+
+        $array = array_map(function ($item) {
+            return $this->reverseTransform($item);
+        }, $array);
+
+        return new ArrayIterator($array);
     }
 
     public function addTransformer(Transformer $transformer)

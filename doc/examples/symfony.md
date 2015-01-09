@@ -11,11 +11,7 @@ file storage with JSON encoding:
 services:
 
     my_storage:
-        class: BlackBox\Transformer\JsonEncoder
-        arguments: [ "@my_storage.backend" ]
-
-    my_storage.backend:
-        class: BlackBox\Adapter\MultipleFileStorage
+        class: BlackBox\Backend\MultipleFileStorage
         arguments: [ "%kernel.root_dir%/data", "json" ]
 
 ```

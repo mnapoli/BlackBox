@@ -3,13 +3,14 @@
 namespace Tests\BlackBox\Transformer;
 
 use BlackBox\Transformer\ObjectArrayMapper;
+use Tests\BlackBox\Transformer\ObjectArrayMapper\FixtureClass;
 
 /**
  * @covers \BlackBox\Transformer\ObjectArrayMapper
  */
 class ObjectArrayMapperTest extends \PHPUnit_Framework_TestCase
 {
-    const FIXTURE = 'Tests\BlackBox\Transformer\FixtureClass';
+    const FIXTURE = 'Tests\BlackBox\Transformer\ObjectArrayMapper\FixtureClass';
 
     /**
      * @var ObjectArrayMapper
@@ -84,21 +85,5 @@ class ObjectArrayMapperTest extends \PHPUnit_Framework_TestCase
 
         $expectedObject = new FixtureClass(null, null, null);
         $this->assertEquals($expectedObject, $this->transformer->reverseTransform($array));
-    }
-}
-
-class FixtureClass
-{
-    public $public;
-    protected $protected;
-    private $private;
-
-    public static $static = 'hello';
-
-    public function __construct($public, $protected, $private)
-    {
-        $this->public = $public;
-        $this->protected = $protected;
-        $this->private = $private;
     }
 }
