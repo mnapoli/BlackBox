@@ -63,7 +63,7 @@ You can read all about those interfaces in the [Interfaces documentation](doc/in
 BlackBox can store data in:
 
 - files
-- database (MySQL, PostgreSQL, SQLite, Oracle, …)
+- database (MySQL, PostgreSQL, SQLite, Oracle, …) using [Doctrine DBAL](http://docs.doctrine-project.org/projects/doctrine-dbal/en/latest/)
 - [Redis](http://redis.io/)
 - memory/arrays
 
