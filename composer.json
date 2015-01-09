@@ -22,6 +22,7 @@
         "symfony/yaml": "~2.6",
         "jms/serializer": "~0.15",
         "predis/predis": "~1.0",
-        "symfony/filesystem": "~2.5"
+        "symfony/filesystem": "~2.5",
+        "doctrine/dbal": "~2.4"
     }
 }
