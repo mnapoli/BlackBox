@@ -7,9 +7,10 @@ This is an example of storing data in a single file, encoded in JSON.
 ## Storing a single item
 
 ```php
-$storage = new JsonEncoder(
+$storage = new StorageWithTransformers(
     new FileStorage('/tmp/data.json')
 );
+$storage->addTransformer(new JsonEncoder);
 
 $storage->setData('Hello World');
 ```
@@ -33,14 +34,14 @@ $data = $storage->getData();
 echo $data['foo'];
 ```
 
-But instead of handling that array yourself, you can use the **`ArrayMapAdapter`** that does this for you. Thanks to that adapter, you can use the `MapStorage` API:
+But instead of handling that array yourself, you can use the **`MapAdapter`** that does this for you. Thanks to that adapter, you can use the `MapStorage` API:
 
 ```php
-$storage = new ArrayMapAdapter(
-    new JsonEncoder(
-        new FileStorage('/tmp/data.json')
-    )
+$fileStorage = new StorageWithTransformers(
+    new FileStorage('/tmp/data.json')
 );
+$fileStorage->addTransformer(new JsonEncoder);
+$storage = new MapAdapter($fileStorage);
 
 $storage->set('foo', 'Hello World');
 ```

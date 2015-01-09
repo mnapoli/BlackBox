@@ -17,6 +17,9 @@ class FileStorage implements Storage
      */
     private $filename;
 
+    /**
+     * @param string $filename File in which to store the data.
+     */
     public function __construct($filename)
     {
         $this->filename = (string) $filename;

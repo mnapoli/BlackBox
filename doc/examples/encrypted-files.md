@@ -5,15 +5,13 @@ currentMenu: example_encrypted
 This is an example of encrypted file storage:
 
 ```php
-$encrypter = new Crypt_AES(CRYPT_AES_MODE_CBC);
-$encrypter->setKey('some-random-and-long-encryption-key');
+$key = 'some-random-and-long-encryption-key';
 
-$storage = new PhpSerializerEncoder(
-    new AesEncrypter(
-        new MultipleFileStorage('/tmp'),
-        $encrypter
-    )
+$storage = new MapWithTransformers(
+    new MultipleFileStorage('/tmp')
 );
+$storage->addTransformer(new PhpSerializeEncoder);
+$storage->addTransformer(AesEncrypter::createDefault($key));
 ```
 
 When storing a PHP variable, it will be:
