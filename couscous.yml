@@ -14,6 +14,9 @@ template:
                     backends:
                         text: Backends
                         relativeUrl: doc/backends.html
+                    transformers:
+                        text: Transformers
+                        relativeUrl: doc/transformers.html
             other:
                 name: Examples
                 items:

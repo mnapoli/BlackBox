@@ -76,7 +76,7 @@ Backends are classes that implement the `Storage` or `MapStorage` interfaces:
 - `MemoryStorage` (implements `Storage`)
 - `ArrayStorage` (implements `MapStorage`)
 
-You can read all about the backends in the [Backends documentation](doc/backends.md).
+You can read all about backends in the [Backends documentation](doc/backends.md).
 
 ## Transformers
 
@@ -88,6 +88,8 @@ Transformers transform data before storage and after retrieval:
 - `ObjectArrayMapper`
 - `AesEncrypter`
 - `JmsSerializer` for using the [JMS Serializer library](http://jmsyst.com/libs/serializer)
+
+You can read all about transformers in the [Transformers documentation](doc/transformers.md).
 
 To use transformers, you need to use `StorageWithTransformers` or `MapWithTransformers`:
 
