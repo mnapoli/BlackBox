@@ -92,8 +92,16 @@ header.navbar {
     margin-top: 0;
 }
 
+#sidebar {
+    font-size: 15px;
+}
 #sidebar .text-muted {
     color: #aaa;
+    text-transform: uppercase;
+    text-align: center;
+}
+#sidebar .nav {
+    margin-bottom: 15px;
 }
 
 code {

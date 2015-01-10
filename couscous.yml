@@ -1,8 +1,9 @@
-# The left menu bar
+baseUrl: http://mnapoli.fr/BlackBox
+
 menu:
     sections:
         main:
-            name: Main documentation
+            name: Documentation
             items:
                 home:
                     text: Home
