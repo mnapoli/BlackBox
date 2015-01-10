@@ -23,7 +23,7 @@ class JmsSerializerTest extends \PHPUnit_Framework_TestCase
         parent::setUp();
 
         $jmsSerializer = SerializerBuilder::create()
-            ->addMetadataDir(__DIR__ . '/JmsSerializer')
+            ->addMetadataDir(__DIR__ . '/JmsSerializer', 'Tests\BlackBox\Transformer\JmsSerializer')
             ->build();
 
         $this->transformer = new JmsSerializer($jmsSerializer, 'json', self::FIXTURE);
