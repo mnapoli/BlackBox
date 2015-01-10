@@ -54,4 +54,62 @@ class MapWithTransformersTest extends \PHPUnit_Framework_TestCase
         $storage->set('foo', 'bar');
         $this->assertEquals(['foo' => 'bar'], iterator_to_array($storage));
     }
+
+    /**
+     * @test
+     */
+    public function set_should_call_transformers_in_order()
+    {
+        $firstTransformer = $this->getMockForAbstractClass('BlackBox\Transformer\Transformer');
+        $firstTransformer->expects($this->once())
+            ->method('transform')
+            ->willReturnCallback(function ($data) {
+                return $data . ' - first';
+            });
+
+        $secondTransformer = $this->getMockForAbstractClass('BlackBox\Transformer\Transformer');
+        $secondTransformer->expects($this->once())
+            ->method('transform')
+            ->willReturnCallback(function ($data) {
+                return $data . ' - second';
+            });
+
+        $backend = new ArrayStorage;
+        $storage = new MapWithTransformers($backend);
+        $storage->addTransformer($firstTransformer);
+        $storage->addTransformer($secondTransformer);
+
+        $storage->set('foo', 'bar');
+
+        $this->assertEquals('bar - first - second', $backend->get('foo'));
+    }
+
+    /**
+     * @test
+     */
+    public function get_should_call_transformers_in_revers_order()
+    {
+        $firstTransformer = $this->getMockForAbstractClass('BlackBox\Transformer\Transformer');
+        $firstTransformer->expects($this->once())
+            ->method('reverseTransform')
+            ->willReturnCallback(function ($data) {
+                return $data . ' - first';
+            });
+
+        $secondTransformer = $this->getMockForAbstractClass('BlackBox\Transformer\Transformer');
+        $secondTransformer->expects($this->once())
+            ->method('reverseTransform')
+            ->willReturnCallback(function ($data) {
+                return $data . ' - second';
+            });
+
+        $backend = new ArrayStorage;
+        $storage = new MapWithTransformers($backend);
+        $storage->addTransformer($firstTransformer);
+        $storage->addTransformer($secondTransformer);
+
+        $backend->set('foo', 'bar');
+
+        $this->assertEquals('bar - second - first', $storage->get('foo'));
+    }
 }

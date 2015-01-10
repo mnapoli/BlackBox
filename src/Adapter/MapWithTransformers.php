@@ -91,7 +91,8 @@ class MapWithTransformers implements IteratorAggregate, MapStorage
      */
     private function reverseTransform($data)
     {
-        foreach ($this->transformers as $transformer) {
+        foreach (array_reverse($this->transformers) as $transformer) {
+            /** @var Transformer $transformer */
             $data = $transformer->reverseTransform($data);
         }
 
