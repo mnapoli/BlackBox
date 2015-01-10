@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+
+    <title>BlackBox - The versatile storage library for modern PHP applications</title>
+    <meta name="description" content="BlackBox is a versatile storage library for PHP">
+
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/css/highlight.dark.css" rel="stylesheet">
+    <link href="/css/custom.css" rel="stylesheet">
+
+</head>
+<body>
+
+    <header class="navbar navbar-inverse navbar-fixed-top">
+        <a class="navbar-brand" href="/">
+            <i class="fa fa-cube"></i>
+            BlackBox
+            <small class="hidden-xs hidden-sm">
+                The versatile storage library for modern PHP applications
+            </small>
+        </a>
+        <a href="https://github.com/mnapoli/BlackBox">
+            <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png">
+        </a>
+    </header>
+
+    <main>
+        <div class="container-fluid">
+            <div class="row">
+
+                <nav id="sidebar" class="col-sm-3 col-lg-2" role="navigation">
+
+                                            <p class="text-muted">
+                            Documentation
+                        </p>
+
+                        <ul class="nav nav-pills nav-stacked">
+                                                            <li class="">
+                                    <a href="/">
+                                        Home
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/doc/interfaces.html">
+                                        Interfaces
+                                    </a>
+                                </li>
+                                                            <li class="active">
+                                    <a href="/doc/backends.html">
+                                        Backends
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/doc/transformers.html">
+                                        Transformers
+                                    </a>
+                                </li>
+                                                    </ul>
+                                            <p class="text-muted">
+                            Examples
+                        </p>
+
+                        <ul class="nav nav-pills nav-stacked">
+                                                            <li class="">
+                                    <a href="/doc/examples/encrypted-files.html">
+                                        Encrypted file storage
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/doc/examples/json-single-file.html">
+                                        Single JSON file
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/doc/examples/php-di.html">
+                                        PHP-DI
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/doc/examples/symfony.html">
+                                        Symfony
+                                    </a>
+                                </li>
+                                                    </ul>
+                    
+                </nav>
+
+                <section class="col-sm-offset-3 col-lg-offset-2 col-sm-9 col-lg-10">
+                    <p>Backends are classes that implement the <code>Storage</code> or <code>MapStorage</code> interfaces.</p>
+<h2><code>FileStorage</code></h2>
+<p><em>Implements <code>Storage</code>.</em></p>
+<p>Stores data in a single file.</p>
+<pre><code class="language-php">$storage = new FileStorage('some/file.txt');
+$storage-&gt;setData('Hello world!');</code></pre>
+<h2><code>MultipleFileStorage</code></h2>
+<p><em>Implements <code>MapStorage</code>.</em></p>
+<p>Stores data in multiple files (one file per ID).</p>
+<pre><code class="language-php">$storage = new MultipleFileStorage('some/writable/directory', $extension = 'txt');</code></pre>
+<p>File names are constructed from the ids. If <code>$extension</code> is provided, then it is used as file extension.</p>
+<h2><code>RedisStorage</code></h2>
+<p><em>Implements <code>MapStorage</code>.</em></p>
+<p>Stores data in a Redis server.</p>
+<pre><code class="language-php">$storage = RedisStorage::create();</code></pre>
+<p>The Redis backend requires Predis to be installed in your project:</p>
+<pre><code>composer require predis/predis</code></pre>
+<p>You can customize the options of the Redis connection:</p>
+<pre><code class="language-php">$storage = RedisStorage::create($parameters, $options);
+
+// or manually creating the Redis instance:
+$redis = new \Predis\Client($parameters, $options);
+$storage = new RedisStorage($redis);</code></pre>
+<p>Check out the <a href="https://github.com/nrk/predis">Predis documentation</a> for more information on the connection parameters.</p>
+<h2><code>DatabaseTable</code></h2>
+<p><em>Implements <code>MapStorage</code>.</em></p>
+<p>Stores data in a Database table. This backend relies on the <a href="http://docs.doctrine-project.org/projects/doctrine-dbal/en/latest/"><strong>Doctrine DBAL</strong></a> library, a powerful Database Abstraction Layer which allows to connect to MySQL, PostgreSQL, SQLite, Oracle, …</p>
+<p>This backend is actually composed of two classes:</p>
+<ul>
+<li><code>DatabaseSchema</code>: map to retrieve (or create) database tables</li>
+<li><code>DatabaseTable</code>: store and retrieve table rows</li>
+</ul>
+<p>Both classes implement <code>MapStorage</code>.</p>
+<p>You can use <code>DatabaseTable</code> alone or use <code>DatabaseSchema</code> to create and retrieve table instances.</p>
+<p>To use this backend, you need to install the Doctrine DBAL library:</p>
+<pre><code>composer require doctrine/dbal</code></pre>
+<p>Here is a simple example using a MySQL server:</p>
+<pre><code class="language-php">$dbal = DriverManager::getConnection([
+    'dbname'   =&gt; 'my_database',
+    'user'     =&gt; 'user',
+    'password' =&gt; 'secret',
+    'host'     =&gt; 'localhost',
+    'driver'   =&gt; 'pdo_mysql',
+]);
+$dbStorage = new DatabaseSchema($dbal);
+
+// Returns the 'users' table
+$userStorage = $dbStorage-&gt;get('users');
+
+$userStorage-&gt;set('johndoe', $johnDoe);
+$user = $userStorage-&gt;get('johndoe');</code></pre>
+<p>Each table contains a <code>_id</code> string primary key. Be aware that BlackBox is not meant to be a full database abstraction layer: you cannot use auto-increment, you cannot perform SQL queries, …</p>
+<p>Note also that the Database storage backend <em>is not an ORM</em>. You cannot store objects directly in a <code>TableStorage</code>, you can only store arrays containing primitive types. You can however use transformers to turn objects into arrays (and vice-versa when data is retrieved).</p>
+<p>See all the configuration options in the <a href="http://docs.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/configuration.html">DBAL configuration documentation</a>.</p>
+<h2><code>MemoryStorage</code></h2>
+<p><em>Implements <code>Storage</code>.</em></p>
+<p>Stores data in memory. Obviously the data is not persistent between requests.
+This backend can be useful for tests or quick prototyping.</p>
+<h2><code>ArrayStorage</code></h2>
+<p><em>Implements <code>MapStorage</code>.</em></p>
+<p>Stores data in an array in memory. Obviously the data is not persistent between requests.
+This backend can be useful for tests or quick prototyping.</p>
+                </section>
+
+            </div>
+        </div>
+    </main>
+
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="http://yastatic.net/highlightjs/8.2/highlight.min.js"></script>
+
+    <script>
+        $(function() {
+            $("section>h1").wrap('<div class="page-header" />');
+            $("section>p:first-child").addClass('lead');
+            hljs.initHighlightingOnLoad();
+        });
+    </script>
+
+</body>
+</html>

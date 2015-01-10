@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+
+    <title>BlackBox - The versatile storage library for modern PHP applications</title>
+    <meta name="description" content="BlackBox is a versatile storage library for PHP">
+
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/css/highlight.dark.css" rel="stylesheet">
+    <link href="/css/custom.css" rel="stylesheet">
+
+</head>
+<body>
+
+    <header class="navbar navbar-inverse navbar-fixed-top">
+        <a class="navbar-brand" href="/">
+            <i class="fa fa-cube"></i>
+            BlackBox
+            <small class="hidden-xs hidden-sm">
+                The versatile storage library for modern PHP applications
+            </small>
+        </a>
+        <a href="https://github.com/mnapoli/BlackBox">
+            <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png">
+        </a>
+    </header>
+
+    <main>
+        <div class="container-fluid">
+            <div class="row">
+
+                <nav id="sidebar" class="col-sm-3 col-lg-2" role="navigation">
+
+                                            <p class="text-muted">
+                            Documentation
+                        </p>
+
+                        <ul class="nav nav-pills nav-stacked">
+                                                            <li class="">
+                                    <a href="/">
+                                        Home
+                                    </a>
+                                </li>
+                                                            <li class="active">
+                                    <a href="/doc/interfaces.html">
+                                        Interfaces
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/doc/backends.html">
+                                        Backends
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/doc/transformers.html">
+                                        Transformers
+                                    </a>
+                                </li>
+                                                    </ul>
+                                            <p class="text-muted">
+                            Examples
+                        </p>
+
+                        <ul class="nav nav-pills nav-stacked">
+                                                            <li class="">
+                                    <a href="/doc/examples/encrypted-files.html">
+                                        Encrypted file storage
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/doc/examples/json-single-file.html">
+                                        Single JSON file
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/doc/examples/php-di.html">
+                                        PHP-DI
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/doc/examples/symfony.html">
+                                        Symfony
+                                    </a>
+                                </li>
+                                                    </ul>
+                    
+                </nav>
+
+                <section class="col-sm-offset-3 col-lg-offset-2 col-sm-9 col-lg-10">
+                    <p>BlackBox defines several interfaces to abstract storages.</p>
+<h2><code>Storage</code></h2>
+<p><code>Storage</code> is the base interface <strong>that every storage class implements</strong>.</p>
+<pre><code class="language-php">interface Storage
+{
+    /**
+     * Returns the data stored.
+     *
+     * @throws StorageException Error while retrieving the data.
+     *
+     * @return mixed Returns null if the storage was empty.
+     */
+    public function getData();
+
+    /**
+     * Stores data in the storage.
+     *
+     * If the storage contained anything previously, it will be overwritten.
+     *
+     * @param mixed $data
+     *
+     * @throws StorageException Error while storing the data.
+     *
+     * @return void
+     */
+    public function setData($data);
+}</code></pre>
+<h2><code>MapStorage</code></h2>
+<p>The <code>MapStorage</code> interface defines storages that can store data as a <a href="http://en.wikipedia.org/wiki/Associative_array">map/dictionary</a> (just like a PHP associative array).</p>
+<p>It can contain multiple items and these items are indexed by an ID.</p>
+<pre><code class="language-php">interface MapStorage extends Traversable
+{
+    /**
+     * Returns the data stored under the given ID.
+     *
+     * @param string $id
+     *
+     * @throws StorageException Error while retrieving the data.
+     *
+     * @return mixed
+     */
+    public function get($id);
+
+    /**
+     * Stores data under the given ID.
+     *
+     * @param string $id
+     * @param mixed $data
+     *
+     * @throws StorageException Error while storing the data.
+     *
+     * @return void
+     */
+    public function set($id, $data);
+}</code></pre>
+<p>The interface extends <code>Traversable</code>, which means a <code>MapStorage</code> can be traversed using foreach:</p>
+<pre><code class="language-php">foreach ($storage as $key =&gt; $item) {
+    // ...
+}</code></pre>
+<p>If needed to be used with <code>array_*</code> functions, you can turn the storage to an array:</p>
+<pre><code class="language-php">$array = iterator_to_array($storage);</code></pre>
+                </section>
+
+            </div>
+        </div>
+    </main>
+
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="http://yastatic.net/highlightjs/8.2/highlight.min.js"></script>
+
+    <script>
+        $(function() {
+            $("section>h1").wrap('<div class="page-header" />');
+            $("section>p:first-child").addClass('lead');
+            hljs.initHighlightingOnLoad();
+        });
+    </script>
+
+</body>
+</html>

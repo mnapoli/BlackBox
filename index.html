@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+
+    <title>BlackBox - The versatile storage library for modern PHP applications</title>
+    <meta name="description" content="BlackBox is a versatile storage library for PHP">
+
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/css/highlight.dark.css" rel="stylesheet">
+    <link href="/css/custom.css" rel="stylesheet">
+
+</head>
+<body>
+
+    <header class="navbar navbar-inverse navbar-fixed-top">
+        <a class="navbar-brand" href="/">
+            <i class="fa fa-cube"></i>
+            BlackBox
+            <small class="hidden-xs hidden-sm">
+                The versatile storage library for modern PHP applications
+            </small>
+        </a>
+        <a href="https://github.com/mnapoli/BlackBox">
+            <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png">
+        </a>
+    </header>
+
+    <main>
+        <div class="container-fluid">
+            <div class="row">
+
+                <nav id="sidebar" class="col-sm-3 col-lg-2" role="navigation">
+
+                                            <p class="text-muted">
+                            Documentation
+                        </p>
+
+                        <ul class="nav nav-pills nav-stacked">
+                                                            <li class="active">
+                                    <a href="/">
+                                        Home
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/doc/interfaces.html">
+                                        Interfaces
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/doc/backends.html">
+                                        Backends
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/doc/transformers.html">
+                                        Transformers
+                                    </a>
+                                </li>
+                                                    </ul>
+                                            <p class="text-muted">
+                            Examples
+                        </p>
+
+                        <ul class="nav nav-pills nav-stacked">
+                                                            <li class="">
+                                    <a href="/doc/examples/encrypted-files.html">
+                                        Encrypted file storage
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/doc/examples/json-single-file.html">
+                                        Single JSON file
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/doc/examples/php-di.html">
+                                        PHP-DI
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/doc/examples/symfony.html">
+                                        Symfony
+                                    </a>
+                                </li>
+                                                    </ul>
+                    
+                </nav>
+
+                <section class="col-sm-offset-3 col-lg-offset-2 col-sm-9 col-lg-10">
+                    <h1>BlackBox</h1>
+<p>BlackBox is a storage library that abstracts backends and data transformation behind simple interfaces.</p>
+<p><a href="https://travis-ci.org/mnapoli/BlackBox"><img alt="Build Status" src="https://img.shields.io/travis/mnapoli/BlackBox.svg?style=flat-square" /></a>
+<a href="https://coveralls.io/r/mnapoli/BlackBox?branch=master"><img alt="Coverage Status" src="https://img.shields.io/coveralls/mnapoli/BlackBox/master.svg?style=flat-square" /></a>
+<a href="https://scrutinizer-ci.com/g/mnapoli/BlackBox/?branch=master"><img alt="Scrutinizer Code Quality" src="https://img.shields.io/scrutinizer/g/mnapoli/BlackBox.svg?style=flat-square" /></a>
+<a href="https://packagist.org/packages/mnapoli/BlackBox"><img alt="Latest Version" src="https://img.shields.io/github/release/mnapoli/BlackBox.svg?style=flat-square" /></a></p>
+<blockquote>
+<p>Store data. "Where" and "how" can be decided later.</p>
+</blockquote>
+<h2>Usage</h2>
+<p>The API is defined by interfaces and is extremely simple.</p>
+<p>You can have 2 storage types:</p>
+<ul>
+<li>the basic <strong><code>Storage</code></strong> interface for storing just 1 thing:</li>
+</ul>
+<pre><code class="language-php">namespace BlackBox;
+
+interface Storage
+{
+    public function getData();
+    public function setData($data);
+}
+
+$storage-&gt;setData('Hello World!');
+
+echo $storage-&gt;getData(); // Hello World!</code></pre>
+<ul>
+<li>the <strong><code>MapStorage</code></strong> interface for storing several items:</li>
+</ul>
+<pre><code class="language-php">namespace BlackBox;
+
+interface MapStorage extends Traversable
+{
+    public function get($id);
+    public function set($id, $data);
+}
+
+$storage-&gt;set('foo', 'Hello World!');
+
+echo $storage-&gt;get('foo'); // Hello World!
+
+foreach ($storage as $key =&gt; $item) {
+    echo $key; // foo
+    echo $item; // Hello World!
+}</code></pre>
+<p>You can read all about those interfaces in the <a href="doc/interfaces.html">Interfaces documentation</a>.</p>
+<h2>Features</h2>
+<p>BlackBox can store data in:</p>
+<ul>
+<li>files</li>
+<li>database (MySQL, PostgreSQL, SQLite, Oracle, …) using <a href="http://docs.doctrine-project.org/projects/doctrine-dbal/en/latest/">Doctrine DBAL</a></li>
+<li><a href="http://redis.io/">Redis</a></li>
+<li>memory/arrays</li>
+</ul>
+<p>Data can optionally be:</p>
+<ul>
+<li>stored in JSON</li>
+<li>stored in YAML</li>
+<li>serialized using PHP's <code>serialize()</code> function</li>
+<li>encrypted with AES</li>
+</ul>
+<p>An integration with the <a href="http://jmsyst.com/libs/serializer">JMS Serializer</a> library also allows to serialize PHP objects to JSON, XML or YAML.</p>
+<h2>Backends</h2>
+<p>Backends are classes that implement the <code>Storage</code> or <code>MapStorage</code> interfaces:</p>
+<ul>
+<li><code>FileStorage</code> (implements <code>Storage</code>)</li>
+<li><code>MultipleFileStorage</code> (implements <code>MapStorage</code>)</li>
+<li><code>RedisStorage</code> (implements <code>MapStorage</code>)</li>
+<li><code>DatabaseTable</code> (implements <code>MapStorage</code>)</li>
+<li><code>MemoryStorage</code> (implements <code>Storage</code>)</li>
+<li><code>ArrayStorage</code> (implements <code>MapStorage</code>)</li>
+</ul>
+<p>You can read all about backends in the <a href="doc/backends.html">Backends documentation</a>.</p>
+<h2>Transformers</h2>
+<p>Transformers transform data before storage and after retrieval:</p>
+<ul>
+<li><code>JsonEncoder</code></li>
+<li><code>YamlEncoder</code></li>
+<li><code>PhpSerializerEncoder</code></li>
+<li><code>ObjectArrayMapper</code></li>
+<li><code>AesEncrypter</code></li>
+<li><code>JmsSerializer</code> for using the <a href="http://jmsyst.com/libs/serializer">JMS Serializer library</a></li>
+</ul>
+<p>You can read all about transformers in the <a href="doc/transformers.html">Transformers documentation</a>.</p>
+<p>To use transformers, you need to use <code>StorageWithTransformers</code> or <code>MapWithTransformers</code>:</p>
+<pre><code class="language-php">$storage = new StorageWithTransformers(
+    new FileStorage('data.json')
+);
+$storage-&gt;addTransformer(new JsonEncoder());
+
+$storage-&gt;setData('Hello World!');
+echo $storage-&gt;getData();</code></pre>
+<p>In this example, we use the JsonEncoder to encode data in JSON before storing it into the <code>data.json</code> file. The transformer will also decode the data when it is read with <code>$storage-&gt;getData()</code>.</p>
+<p>You can of course use several transformers to solve complex use cases.</p>
+<pre><code class="language-php">// Store data in files
+$storage = new MapWithTransformers(
+    new MultipleFileStorage('some/directory')
+);
+
+// Map objects to array and vice-versa
+// (because JSON can't deserialize arrays into PHP objects of a specific class)
+$storage-&gt;addTransformer(new ObjectArrayMapper('MyClass'));
+
+// Encode the data in JSON
+$storage-&gt;addTransformer(new JsonEncoder());
+
+$object = new MyClass();
+$object-&gt;name = 'Lebowski';
+
+$storage-&gt;set('foo', $object);
+// will turn the object into an array
+// then will encode it in JSON
+// then will store it into a file
+
+$object = $storage-&gt;get('foo');
+// will read from the file
+// then will decode the JSON
+// then will map the decoded array to a MyClass object
+
+echo $object-&gt;name; // Lebowski</code></pre>
+<h2>License</h2>
+<p>BlackBox is released under the MIT license.</p>
+                </section>
+
+            </div>
+        </div>
+    </main>
+
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="http://yastatic.net/highlightjs/8.2/highlight.min.js"></script>
+
+    <script>
+        $(function() {
+            $("section>h1").wrap('<div class="page-header" />');
+            $("section>p:first-child").addClass('lead');
+            hljs.initHighlightingOnLoad();
+        });
+    </script>
+
+</body>
+</html>

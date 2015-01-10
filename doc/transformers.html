@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+
+    <title>BlackBox - The versatile storage library for modern PHP applications</title>
+    <meta name="description" content="BlackBox is a versatile storage library for PHP">
+
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/css/highlight.dark.css" rel="stylesheet">
+    <link href="/css/custom.css" rel="stylesheet">
+
+</head>
+<body>
+
+    <header class="navbar navbar-inverse navbar-fixed-top">
+        <a class="navbar-brand" href="/">
+            <i class="fa fa-cube"></i>
+            BlackBox
+            <small class="hidden-xs hidden-sm">
+                The versatile storage library for modern PHP applications
+            </small>
+        </a>
+        <a href="https://github.com/mnapoli/BlackBox">
+            <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png">
+        </a>
+    </header>
+
+    <main>
+        <div class="container-fluid">
+            <div class="row">
+
+                <nav id="sidebar" class="col-sm-3 col-lg-2" role="navigation">
+
+                                            <p class="text-muted">
+                            Documentation
+                        </p>
+
+                        <ul class="nav nav-pills nav-stacked">
+                                                            <li class="">
+                                    <a href="/">
+                                        Home
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/doc/interfaces.html">
+                                        Interfaces
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/doc/backends.html">
+                                        Backends
+                                    </a>
+                                </li>
+                                                            <li class="active">
+                                    <a href="/doc/transformers.html">
+                                        Transformers
+                                    </a>
+                                </li>
+                                                    </ul>
+                                            <p class="text-muted">
+                            Examples
+                        </p>
+
+                        <ul class="nav nav-pills nav-stacked">
+                                                            <li class="">
+                                    <a href="/doc/examples/encrypted-files.html">
+                                        Encrypted file storage
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/doc/examples/json-single-file.html">
+                                        Single JSON file
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/doc/examples/php-di.html">
+                                        PHP-DI
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/doc/examples/symfony.html">
+                                        Symfony
+                                    </a>
+                                </li>
+                                                    </ul>
+                    
+                </nav>
+
+                <section class="col-sm-offset-3 col-lg-offset-2 col-sm-9 col-lg-10">
+                    <p>Transformers are classes that transform the data before it is stored or retrieved.</p>
+<p>They can be used on top of another storage like so:</p>
+<pre><code class="language-php">$storage = new StorageWithTransformers(
+    new FileStorage('data.json')
+);
+$storage-&gt;addTransformer(new JsonEncoder());
+
+$storage-&gt;setData('Hello World!');
+echo $storage-&gt;getData();</code></pre>
+<h2><code>JsonEncoder</code></h2>
+<p>Encodes data from and to JSON.</p>
+<pre><code class="language-php">$storage = new JsonEncoder($pretty);</code></pre>
+<p>If <code>$pretty</code> is true, then the JSON will be formatted to be human readable (false by default).</p>
+<h2><code>YamlEncoder</code></h2>
+<p>Encodes data from and to YAML.</p>
+<pre><code class="language-php">$storage = new YamlEncoder();</code></pre>
+<p>To use this transformer, you will need to install the <code>Symfony\YAML</code> component:</p>
+<pre><code>composer require symfony/yaml</code></pre>
+<h2><code>PhpSerializerEncoder</code></h2>
+<p>Encodes data using the PHP <code>serialize</code> function.</p>
+<pre><code class="language-php">$storage = new PhpSerializerEncoder();</code></pre>
+<h2><code>ObjectArrayMapper</code></h2>
+<p>Maps objects to arrays and vice-versa.</p>
+<pre><code class="language-php">$storage = new ObjectArrayMapper('MyClass');
+
+class MyClass {
+    private $foo = 'Hello';
+}
+
+// Will be serialized to
+array(
+    'foo' =&gt; 'Hello'
+);</code></pre>
+<p>On storage, the mapper will extract all the object's properties (including protected and privates) and put them into an array.</p>
+<p>On retrieval, it will create a new instance of the class (without calling the constructor) and restore the properties values from the array.</p>
+<h2><code>AesEncrypter</code></h2>
+<p>Encrypts and decrypts data using AES encryption.</p>
+<pre><code class="language-php">$encrypter = new Crypt_AES(CRYPT_AES_MODE_CBC);
+$encrypter-&gt;setKey($encryptionKey);
+
+$storage = new AesEncrypter($encrypter);
+
+// Same as above:
+$storage = AesEncrypter::createDefault($encryptionKey);</code></pre>
+<p>Remember to store the encryption key securely!</p>
+<p>To use this transformer, you will need to install the <code>phpseclib</code>:</p>
+<pre><code>composer require phpseclib/phpseclib</code></pre>
+<h2><code>JmsSerializer</code></h2>
+<p><a href="http://jmsyst.com/libs/serializer">JMS Serializer library</a> integration to serialize objects to string (JSON, XML or YAML).</p>
+<p>Example:</p>
+<pre><code class="language-php">// Create and configure the JMS Serializer
+$jmsSerializer = SerializerBuilder::create()-&gt;build();
+
+// The JMS serializer could then be used like this:
+// $serializer-&gt;deserialize($jsonData, 'MyNamespace\MyObject', 'json');
+
+// So we create our transformer like this:
+$transformer = new JmsSerializer($jmsSerializer, 'json', 'MyNamespace\MyObject');</code></pre>
+<p>See the <a href="http://jmsyst.com/libs/serializer">JMS Serializer</a> documentation to learn how to configure it.</p>
+<p>To use this transformer, you will need to install the JMS Serializer library:</p>
+<pre><code>composer require jms/serializer</code></pre>
+                </section>
+
+            </div>
+        </div>
+    </main>
+
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="http://yastatic.net/highlightjs/8.2/highlight.min.js"></script>
+
+    <script>
+        $(function() {
+            $("section>h1").wrap('<div class="page-header" />');
+            $("section>p:first-child").addClass('lead');
+            hljs.initHighlightingOnLoad();
+        });
+    </script>
+
+</body>
+</html>
