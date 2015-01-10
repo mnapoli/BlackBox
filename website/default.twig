@@ -11,7 +11,7 @@
 
     <link href="{{ baseUrl }}/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ baseUrl }}/css/font-awesome.min.css" rel="stylesheet">
-    <link href="{{ baseUrl }}/css/highlight.github.css" rel="stylesheet">
+    <link href="{{ baseUrl }}/css/highlight.dark.css" rel="stylesheet">
     <link href="{{ baseUrl }}/css/custom.css" rel="stylesheet">
 
 </head>
@@ -62,15 +62,15 @@
         </div>
     </main>
 
-    <script src="{{ baseUrl }}/js/jquery.min.js"></script>
-    <script src="{{ baseUrl }}/js/bootstrap.min.js"></script>
-    {#<script src="http://yandex.st/highlightjs/7.5/highlight.min.js"></script>#}
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="http://yastatic.net/highlightjs/8.2/highlight.min.js"></script>
 
     <script>
         $(function() {
             $("section>h1").wrap('<div class="page-header" />');
             $("section>p:first-child").addClass('lead');
-//            hljs.initHighlightingOnLoad();
+            hljs.initHighlightingOnLoad();
         });
     </script>
 
