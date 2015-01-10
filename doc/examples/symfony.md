@@ -10,8 +10,17 @@ file storage with JSON encoding:
 ```yaml
 services:
 
-    my_storage:
-        class: BlackBox\Backend\MultipleFileStorage
-        arguments: [ "%kernel.root_dir%/data", "json" ]
+    storage:
+        class: BlackBox\Adapter\StorageWithTransformers
+        arguments: [ "@file_storage" ]
+        calls:
+            - [ addTransformer, [ @json_encoder ] ]
+
+    file_storage:
+        class: BlackBox\Backend\FileStorage
+        arguments: [ "%kernel.root_dir%/data/file.json" ]
+
+    json_encoder:
+        class: BlackBox\Transformer\JsonEncoder
 
 ```

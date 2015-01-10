@@ -14,11 +14,12 @@ use ...;
 
 return [
 
-    StorageInterface::class => DI\object(JsonEncoder::class)
-        ->constructor(DI\link('storage.file')),
+    StorageInterface::class => DI\object(StorageWithTransformers::class)
+        ->constructor(DI\link(FileStorage::class))
+        ->method('addTransformer', DI\link(JsonEncoder::class)),
 
-    'storage.file' => DI\object(MultipleFileStorage::class)
-        ->constructor('some/directory', 'json'),
+    FileStorage::class => DI\object()
+        ->constructor('/tmp/file.json'),
 
 ];
 ```
@@ -33,9 +34,12 @@ use ...;
 return [
 
     StorageInterface::class => DI\factory(function () {
-        return new JsonEncoder(
-            new MultipleFileStorage('some/directory', 'json')
+        $storage = new StorageWithTransformers(
+            new FileStorage('/tmp/data.json')
         );
+        $storage->addTransformer(new JsonEncoder);
+
+        return $storage;
     }),
 
 ];
