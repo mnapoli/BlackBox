@@ -13,15 +13,6 @@ use Traversable;
 interface ListStorage extends Traversable
 {
     /**
-     * Returns all data stored.
-     *
-     * @throws StorageException Error while retrieving the data.
-     *
-     * @return array Empty array returned when no data is found.
-     */
-    public function get();
-
-    /**
      * Adds data to the store.
      *
      * @param mixed $data
