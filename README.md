@@ -13,6 +13,8 @@ BlackBox is a storage library that abstracts backends and data transformation be
 
 > Store data. "Where" and "how" can be decided later.
 
+**Experimental: this project is still at the state of experimentation. Use with caution.**
+
 ## Usage
 
 The API is defined by interfaces and is extremely simple.
