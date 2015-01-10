@@ -62,16 +62,18 @@ li {
 header.navbar {
     opacity: 0.9;
 }
-.navbar .navbar-brand {
+header.navbar .navbar-brand {
     font-size: 28px;
     height: auto;
     line-height: 35px;
-    margin-left: 20px;
 }
-.navbar .navbar-brand small {
+header.navbar .navbar-brand small {
     font-size: 18px;
     font-weight: 300;
     margin-left: 10px;
+}
+header.navbar .navbar-nav>li>a {
+    line-height: 36px;
 }
 
 @media (min-width: 768px) {
@@ -113,7 +115,7 @@ code {
 pre {
     padding: 0;
     border-radius: 4px;
-    margin: 15px;
+    margin: 15px 0;
 }
 pre code, pre code.hljs {
     margin: 0;
