@@ -27,11 +27,6 @@ class MultipleFileStorage implements IteratorAggregate, MapStorage
     private $fileExtension;
 
     /**
-     * @var FileStorage[]
-     */
-    private $files = [];
-
-    /**
      * @param string $directory     Directory in which to set the data.
      * @param string $fileExtension File extension to use (if null, no extension is used).
      *
@@ -58,7 +53,17 @@ class MultipleFileStorage implements IteratorAggregate, MapStorage
      */
     public function get($id)
     {
-        return $this->getFileStorage($id)->getData();
+        $filename = $this->getFilename($id);
+
+        if (! file_exists($filename)) {
+            return null;
+        }
+
+        if (! is_readable($filename)) {
+            throw new StorageException(sprintf('The storage file "%s" is not readable', $filename));
+        }
+
+        return file_get_contents($filename);
     }
 
     /**
@@ -66,7 +71,9 @@ class MultipleFileStorage implements IteratorAggregate, MapStorage
      */
     public function set($id, $data)
     {
-        $this->getFileStorage($id)->setData($data);
+        $filename = $this->getFilename($id);
+
+        file_put_contents($filename, $data);
     }
 
     /**
@@ -75,20 +82,6 @@ class MultipleFileStorage implements IteratorAggregate, MapStorage
     public function getIterator()
     {
         return new ArrayIterator($this->getAll());
-    }
-
-    /**
-     * @param string $id
-     *
-     * @return FileStorage
-     */
-    private function getFileStorage($id)
-    {
-        if (! isset($this->files[$id])) {
-            $this->files[$id] = new FileStorage($this->getFilename($id));
-        }
-
-        return $this->files[$id];
     }
 
     /**
