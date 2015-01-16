@@ -19,25 +19,7 @@ BlackBox is a storage library that abstracts backends and data transformation be
 
 The API is defined by interfaces and is extremely simple.
 
-You can have 2 storage types:
-
-- the basic **`Storage`** interface for storing just 1 thing:
-
-```php
-namespace BlackBox;
-
-interface Storage
-{
-    public function getData();
-    public function setData($data);
-}
-
-$storage->setData('Hello World!');
-
-echo $storage->getData(); // Hello World!
-```
-
-- the **`MapStorage`** interface for storing several items:
+- the **`MapStorage`** interface represents a key-value store:
 
 ```php
 namespace BlackBox;
@@ -67,7 +49,7 @@ BlackBox can store data in:
 - files
 - database (MySQL, PostgreSQL, SQLite, Oracle, …) using [Doctrine DBAL](http://docs.doctrine-project.org/projects/doctrine-dbal/en/latest/)
 - [Redis](http://redis.io/)
-- memory/arrays
+- PHP arrays (i.e. in memory)
 
 Data can optionally be:
 
@@ -80,14 +62,13 @@ An integration with the [JMS Serializer](http://jmsyst.com/libs/serializer) libr
 
 ## Backends
 
-Backends are classes that implement the `Storage` or `MapStorage` interfaces:
+Backends are classes that implement `MapStorage`:
 
-- `FileStorage` (implements `Storage`)
-- `MultipleFileStorage` (implements `MapStorage`)
-- `RedisStorage` (implements `MapStorage`)
-- `DatabaseTable` (implements `MapStorage`)
-- `MemoryStorage` (implements `Storage`)
-- `ArrayStorage` (implements `MapStorage`)
+- `FileStorage`
+- `MultipleFileStorage`
+- `RedisStorage`
+- `DatabaseTable`
+- `ArrayStorage`
 
 You can read all about backends in the [Backends documentation](doc/backends.md).
 
@@ -103,22 +84,6 @@ Transformers transform data before storage and after retrieval:
 - `JmsSerializer` for using the [JMS Serializer library](http://jmsyst.com/libs/serializer)
 
 You can read all about transformers in the [Transformers documentation](doc/transformers.md).
-
-To use transformers, you need to use `StorageWithTransformers` or `MapWithTransformers`:
-
-```php
-$storage = new StorageWithTransformers(
-    new FileStorage('data.json')
-);
-$storage->addTransformer(new JsonEncoder());
-
-$storage->setData('Hello World!');
-echo $storage->getData();
-```
-
-In this example, we use the JsonEncoder to encode data in JSON before storing it into the `data.json` file. The transformer will also decode the data when it is read with `$storage->getData()`.
-
-You can of course use several transformers to solve complex use cases.
 
 ```php
 // Store data in files
