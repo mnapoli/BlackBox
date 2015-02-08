@@ -56,11 +56,7 @@ class FileStorage implements IteratorAggregate, Storage
     {
         $allData = $this->read();
 
-        if ($data === null) {
-            unset($allData[$id]);
-        } else {
-            $allData[$id] = $data;
-        }
+        $allData[$id] = $data;
 
         $this->save($allData);
     }

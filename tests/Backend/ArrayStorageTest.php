@@ -3,35 +3,17 @@
 namespace Tests\BlackBox\Backend;
 
 use BlackBox\Backend\ArrayStorage;
+use Tests\BlackBox\BaseStorageTest;
 
 /**
  * @covers \BlackBox\Backend\ArrayStorage
  */
-class ArrayStorageTest extends \PHPUnit_Framework_TestCase
+class ArrayStorageTest extends BaseStorageTest
 {
-    /**
-     * @test
-     */
-    public function it_should_store_data_as_map()
+    public function setUp()
     {
-        $storage = new ArrayStorage();
+        parent::setUp();
 
-        $storage->set('foo', 'bar');
-
-        $this->assertEquals('bar', $storage->get('foo'));
-    }
-
-    /**
-     * @test
-     */
-    public function it_should_be_traversable()
-    {
-        $storage = new ArrayStorage();
-
-        $this->assertEquals([], iterator_to_array($storage));
-
-        $storage->set('foo', 'bar');
-
-        $this->assertEquals([ 'foo' => 'bar' ], iterator_to_array($storage));
+        $this->storage = new ArrayStorage();
     }
 }
