@@ -19,15 +19,15 @@ BlackBox is a storage library that abstracts backends and data transformation be
 
 The API is defined by interfaces and is extremely simple.
 
-- the **`MapStorage`** interface represents a key-value store:
-
 ```php
 namespace BlackBox;
 
-interface MapStorage extends Traversable
+interface Storage extends Traversable
 {
     public function get($id);
     public function set($id, $data);
+    public function add($data);
+    public function remove($id);
 }
 
 $storage->set('foo', 'Hello World!');
@@ -62,7 +62,7 @@ An integration with the [JMS Serializer](http://jmsyst.com/libs/serializer) libr
 
 ## Backends
 
-Backends are classes that implement `MapStorage`:
+Backends are classes that implement `Storage`:
 
 - `FileStorage`
 - `MultipleFileStorage`
@@ -87,7 +87,7 @@ You can read all about transformers in the [Transformers documentation](doc/tran
 
 ```php
 // Store data in files
-$storage = new MapWithTransformers(
+$storage = new StorageWithTransformers(
     new MultipleFileStorage('some/directory')
 );
 
