@@ -4,7 +4,7 @@ namespace BlackBox\Backend;
 
 use ArrayIterator;
 use BlackBox\Exception\StorageException;
-use BlackBox\MapStorage;
+use BlackBox\Storage;
 use BlackBox\Transformer\Transformer;
 use IteratorAggregate;
 
@@ -13,7 +13,7 @@ use IteratorAggregate;
  *
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-class FileStorage implements IteratorAggregate, MapStorage
+class FileStorage implements IteratorAggregate, Storage
 {
     /**
      * @var string
@@ -68,6 +68,32 @@ class FileStorage implements IteratorAggregate, MapStorage
     /**
      * {@inheritdoc}
      */
+    public function add($data)
+    {
+        $allData = $this->read();
+
+        $allData[] = $data;
+        $this->save($allData);
+
+        end($allData);
+        return key($allData);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function remove($id)
+    {
+        $allData = $this->read();
+
+        unset($allData[$id]);
+
+        $this->save($allData);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getIterator()
     {
         return new ArrayIterator($this->read());
@@ -80,7 +106,7 @@ class FileStorage implements IteratorAggregate, MapStorage
     private function read()
     {
         if (! file_exists($this->filename)) {
-            return array();
+            return [];
         }
 
         if (! is_readable($this->filename)) {

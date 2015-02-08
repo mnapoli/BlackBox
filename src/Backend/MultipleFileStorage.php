@@ -4,7 +4,9 @@ namespace BlackBox\Backend;
 
 use ArrayIterator;
 use BlackBox\Exception\StorageException;
-use BlackBox\MapStorage;
+use BlackBox\Id\IdGenerator;
+use BlackBox\Id\RandomStringIdGenerator;
+use BlackBox\Storage;
 use IteratorAggregate;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
@@ -14,7 +16,7 @@ use Symfony\Component\Finder\SplFileInfo;
  *
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-class MultipleFileStorage implements IteratorAggregate, MapStorage
+class MultipleFileStorage implements IteratorAggregate, Storage
 {
     /**
      * @var string
@@ -27,13 +29,21 @@ class MultipleFileStorage implements IteratorAggregate, MapStorage
     private $fileExtension;
 
     /**
-     * @param string $directory     Directory in which to set the data.
-     * @param string $fileExtension File extension to use (if null, no extension is used).
+     * @var IdGenerator
+     */
+    private $idGenerator;
+
+    /**
+     * @param string      $directory     Directory in which to set the data.
+     * @param string      $fileExtension File extension to use (if null, no extension is used).
+     * @param IdGenerator $idGenerator
      *
      * @throws StorageException The directory doesn't exist.
      */
-    public function __construct($directory, $fileExtension = null)
+    public function __construct($directory, $fileExtension = null, IdGenerator $idGenerator = null)
     {
+        $this->idGenerator = $idGenerator ?: new RandomStringIdGenerator();
+
         $this->directory = (string) $directory;
         $this->fileExtension = ltrim($fileExtension, '.');
 
@@ -74,6 +84,30 @@ class MultipleFileStorage implements IteratorAggregate, MapStorage
         $filename = $this->getFilename($id);
 
         file_put_contents($filename, $data);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function add($data)
+    {
+        $id = $this->idGenerator->getId();
+
+        $this->set($id, $data);
+
+        return $id;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function remove($id)
+    {
+        $filename = $this->getFilename($id);
+
+        if (file_exists($filename)) {
+            unlink($filename);
+        }
     }
 
     /**

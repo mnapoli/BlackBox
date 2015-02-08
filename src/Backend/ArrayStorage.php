@@ -3,7 +3,7 @@
 namespace BlackBox\Backend;
 
 use ArrayIterator;
-use BlackBox\MapStorage;
+use BlackBox\Storage;
 use IteratorAggregate;
 
 /**
@@ -13,7 +13,7 @@ use IteratorAggregate;
  *
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-class ArrayStorage implements IteratorAggregate, MapStorage
+class ArrayStorage implements IteratorAggregate, Storage
 {
     /**
      * @var array
@@ -38,6 +38,25 @@ class ArrayStorage implements IteratorAggregate, MapStorage
     public function set($id, $data)
     {
         $this->storage[$id] = $data;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function add($data)
+    {
+        $this->storage[] = $data;
+
+        end($this->storage);
+        return key($this->storage);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function remove($id)
+    {
+        unset($this->storage[$id]);
     }
 
     /**

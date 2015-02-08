@@ -3,7 +3,9 @@
 namespace BlackBox\Backend;
 
 use ArrayIterator;
-use BlackBox\MapStorage;
+use BlackBox\Id\IdGenerator;
+use BlackBox\Id\RandomStringIdGenerator;
+use BlackBox\Storage;
 use IteratorAggregate;
 use Predis\Client;
 
@@ -16,12 +18,17 @@ use Predis\Client;
  *
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-class RedisStorage implements IteratorAggregate, MapStorage
+class RedisStorage implements IteratorAggregate, Storage
 {
     /**
      * @var Client
      */
     private $redis;
+
+    /**
+     * @var IdGenerator
+     */
+    private $idGenerator;
 
     /**
      * Creates a new instance by providing directly the Predis constructor arguments.
@@ -36,9 +43,10 @@ class RedisStorage implements IteratorAggregate, MapStorage
         return new static(new Client($parameters, $options));
     }
 
-    public function __construct(Client $redis)
+    public function __construct(Client $redis, IdGenerator $idGenerator = null)
     {
         $this->redis = $redis;
+        $this->idGenerator = $idGenerator ?: new RandomStringIdGenerator();
     }
 
     /**
@@ -54,12 +62,27 @@ class RedisStorage implements IteratorAggregate, MapStorage
      */
     public function set($id, $data)
     {
-        if ($data === null) {
-            $this->redis->del([$id]);
-            return;
-        }
-
         $this->redis->set($id, $data);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function add($data)
+    {
+        $id = $this->idGenerator->getId();
+
+        $this->set($id, $data);
+
+        return $id;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function remove($id)
+    {
+        $this->redis->del([$id]);
     }
 
     /**

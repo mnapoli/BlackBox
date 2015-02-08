@@ -44,13 +44,13 @@ class RedisStorageTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function set_null_should_delete()
+    public function remove_should_delete()
     {
         $this->redis->expects($this->once())
             ->method('del')
             ->with(['foo']);
 
-        $this->storage->set('foo', null);
+        $this->storage->remove('foo');
     }
 
     /**

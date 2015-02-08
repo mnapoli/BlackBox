@@ -3,17 +3,17 @@
 namespace BlackBox\Adapter;
 
 use ArrayIterator;
-use BlackBox\MapStorage;
+use BlackBox\Storage;
 use BlackBox\Transformer\Transformer;
 use IteratorAggregate;
 
 /**
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-class MapWithTransformers implements IteratorAggregate, MapStorage
+class StorageWithTransformers implements IteratorAggregate, Storage
 {
     /**
-     * @var MapStorage
+     * @var Storage
      */
     private $storage;
 
@@ -23,10 +23,10 @@ class MapWithTransformers implements IteratorAggregate, MapStorage
     private $transformers;
 
     /**
-     * @param MapStorage    $storage
+     * @param Storage    $storage
      * @param Transformer[] $transformers
      */
-    public function __construct(MapStorage $storage, array $transformers = [])
+    public function __construct(Storage $storage, array $transformers = [])
     {
         $this->storage = $storage;
         $this->transformers = $transformers;
@@ -50,6 +50,24 @@ class MapWithTransformers implements IteratorAggregate, MapStorage
         $data = $this->transform($data);
 
         $this->storage->set($id, $data);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function add($data)
+    {
+        $data = $this->transform($data);
+
+        return $this->storage->add($data);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function remove($id)
+    {
+        $this->storage->remove($id);
     }
 
     /**

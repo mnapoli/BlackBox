@@ -6,7 +6,7 @@ use BlackBox\Backend\Database\DatabaseTable;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Schema\Column;
-use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Schema\TableDiff;
 use Doctrine\DBAL\Types\Type;
 
 /**
@@ -177,13 +177,11 @@ class DatabaseTableTest extends \PHPUnit_Framework_TestCase
             'memory' => true,
         ]);
 
-        $table = new Table('foo', [
-            new Column('_id', Type::getType(Type::STRING)),
-            new Column('name', Type::getType(Type::STRING), ['notnull' => false]),
-        ]);
-        $table->setPrimaryKey(['_id']);
+        DatabaseTable::createTable($connection, 'foo');
 
-        $connection->getSchemaManager()->createTable($table);
+        $diff = new TableDiff('foo');
+        $diff->addedColumns[] = new Column('name', Type::getType(Type::STRING), ['notnull' => false]);
+        $connection->getSchemaManager()->alterTable($diff);
 
         return $connection;
     }
