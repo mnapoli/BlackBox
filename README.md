@@ -60,6 +60,8 @@ Data can optionally be:
 
 An integration with the [JMS Serializer](http://jmsyst.com/libs/serializer) library also allows to serialize PHP objects to JSON, XML or YAML.
 
+Additionally a storage can be cached with another (e.g. cache a DB storage with a Redis or array storage).
+
 ## Backends
 
 Backends are classes that implement `Storage`:
