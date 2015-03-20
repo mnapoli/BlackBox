@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\BlackBox;
+namespace Tests\BlackBox\Cache;
 
-use BlackBox\StorageCache;
+use BlackBox\Cache\StorageCache;
 
 /**
- * @covers \BlackBox\StorageCache
+ * @covers \BlackBox\Cache\StorageCache
  *
  * @author Carlos Lombarte <lombartec@gmail.com>
  */
@@ -53,35 +53,42 @@ class StorageCacheTest extends \PHPUnit_Framework_TestCase
     public function gets_data_directly_from_cache()
     {
         $cachedData = 'cache';
+        $id         = 25;
 
         $this->storageCacheMock->expects($this->once())
-        ->method('get')
-        ->will($this->returnValue($cachedData));
+            ->method('get')
+            ->will($this->returnValue($cachedData));
 
         $this->sourceStorageMock->expects($this->never())
-        ->method('get');
+            ->method('get')
+            ->with($id);
 
-        $this->assertEquals($cachedData, $this->storage->get(25), 'The cache is not returning the cached data');
+        $this->assertEquals($cachedData, $this->storage->get($id), 'The cache is not returning the cached data');
     }
 
     /**
      * @test
      */
-    public function gets_data_from_source_when_not_in_cache()
+    public function gets_data_from_source_when_not_in_cache_and_stores_result_in_cache()
     {
         $sourceData = 'source_storage_data';
+        $id         = 26;
 
         $this->storageCacheMock->expects($this->once())
-        ->method('get')
-        ->will($this->returnValue(null));
+            ->method('get')
+            ->will($this->returnValue(null));
 
         $this->sourceStorageMock->expects($this->once())
-        ->method('get')
-        ->will($this->returnValue($sourceData));
+            ->method('get')
+            ->will($this->returnValue($sourceData));
+
+        $this->storageCacheMock->expects($this->once())
+            ->method('set')
+            ->with($id, $sourceData);
 
         $this->assertEquals(
             $sourceData,
-            $this->storage->get(26),
+            $this->storage->get($id),
             'The value of the source storage is not being returned'
         );
     }

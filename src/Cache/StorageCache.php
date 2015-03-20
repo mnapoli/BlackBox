@@ -1,11 +1,13 @@
 <?php
 
-namespace BlackBox;
+namespace BlackBox\Cache;
 
+use BlackBox\Storage;
 use IteratorAggregate;
 
 /**
- * Caches an storage with another storage.
+ * Caches a storage with another storage.
+ * Iterating this storage will not use the cache.
  *
  * @author Carlos Lombarte <lombartec@gmail.com>
  */
@@ -42,11 +44,14 @@ class StorageCache implements IteratorAggregate, Storage
     {
         $cachedData = $this->storageCache->get($id);
 
-        if (null === $cachedData) {
-            return $this->sourceStorage->get($id);
+        if (null !== $cachedData) {
+            return $cachedData;
         }
 
-        return $cachedData;
+        $sourceData = $this->sourceStorage->get($id);
+        $this->storageCache->set($id, $sourceData);
+
+        return $sourceData;
     }
 
     /**
