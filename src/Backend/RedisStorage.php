@@ -54,7 +54,13 @@ class RedisStorage implements IteratorAggregate, Storage
      */
     public function get($id)
     {
-        return $this->redis->get($id);
+        $redisValue = $this->redis->get($id);
+
+        if ('' === $redisValue) {
+            return null;
+        }
+
+        return $redisValue;
     }
 
     /**
