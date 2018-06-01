@@ -16,34 +16,25 @@ interface Storage extends Traversable
     /**
      * Returns the data stored under the given ID.
      *
-     * @param string|int $id
-     *
      * @throws StorageException Error while retrieving the data.
      *
      * @return mixed|null Null should be returned when no data is found.
      */
-    public function get($id);
+    public function get(string $id);
 
     /**
      * Stores data under the given ID.
      *
-     * @param string|int $id
-     * @param mixed      $data
+     * @param mixed $data
      *
      * @throws StorageException Error while storing the data.
-     *
-     * @return void
      */
-    public function set($id, $data);
+    public function set(string $id, $data) : void;
 
     /**
      * Removes data stored under the given ID.
      *
-     * @param string|int $id
-     *
      * @throws StorageException Error while removing the data.
-     *
-     * @return void
      */
-    public function remove($id);
+    public function remove(string $id) : void;
 }

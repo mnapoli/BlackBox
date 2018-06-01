@@ -9,7 +9,7 @@ use BlackBox\Storage;
  *
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-abstract class Transformer
+abstract class Transformer implements Storage
 {
     /**
      * @var Storage
@@ -21,21 +21,21 @@ abstract class Transformer
         $this->storage = $storage;
     }
 
-    public function get($id)
+    public function get(string $id)
     {
         $data = $this->storage->get($id);
 
         return $this->restore($data);
     }
 
-    public function set($id, $data)
+    public function set(string $id, $data) : void
     {
         $data = $this->transform($data);
 
         $this->storage->set($id, $data);
     }
 
-    public function remove($id)
+    public function remove(string $id) : void
     {
         $this->storage->remove($id);
     }

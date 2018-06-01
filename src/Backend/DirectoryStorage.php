@@ -2,7 +2,6 @@
 
 namespace BlackBox\Backend;
 
-use ArrayIterator;
 use BlackBox\Exception\StorageException;
 use BlackBox\Storage;
 use IteratorAggregate;
@@ -10,7 +9,7 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
 /**
- * Stores data in multiple files in a directory.
+ * Stores data as multiple files in a directory.
  *
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
@@ -32,7 +31,7 @@ class DirectoryStorage implements IteratorAggregate, Storage
      *
      * @throws StorageException The directory doesn't exist and cannot be created.
      */
-    public function __construct($directory, $fileExtension = null)
+    public function __construct(string $directory, string $fileExtension = null)
     {
         $this->directory = (string) $directory;
         $this->fileExtension = ltrim($fileExtension, '.');
@@ -48,10 +47,7 @@ class DirectoryStorage implements IteratorAggregate, Storage
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function get($id)
+    public function get(string $id)
     {
         $filename = $this->getFilename($id);
 
@@ -66,20 +62,14 @@ class DirectoryStorage implements IteratorAggregate, Storage
         return file_get_contents($filename);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function set($id, $data)
+    public function set(string $id, $data) : void
     {
         $filename = $this->getFilename($id);
 
         file_put_contents($filename, $data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function remove($id)
+    public function remove(string $id) : void
     {
         $filename = $this->getFilename($id);
 
@@ -88,22 +78,15 @@ class DirectoryStorage implements IteratorAggregate, Storage
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getIterator()
     {
-        return new ArrayIterator($this->getAll());
+        yield from $this->getAll();
     }
 
     /**
      * Builds a filename from a storage ID.
-     *
-     * @param string $id
-     *
-     * @return string
      */
-    private function getFilename($id)
+    private function getFilename(string $id) : string
     {
         $extension = $this->fileExtension ? '.' . $this->fileExtension : '';
 
@@ -113,7 +96,7 @@ class DirectoryStorage implements IteratorAggregate, Storage
     /**
      * @return array Get all entries as an array.
      */
-    private function getAll()
+    private function getAll() : array
     {
         $files = new Finder();
         $files->files()->in($this->directory);
@@ -135,7 +118,7 @@ class DirectoryStorage implements IteratorAggregate, Storage
         return $data;
     }
 
-    private function encodeFilename($filename)
+    private function encodeFilename(string $filename) : string
     {
         $filename = urlencode($filename);
         $filename = str_replace('.', '%2E', $filename);

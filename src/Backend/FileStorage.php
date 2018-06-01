@@ -2,7 +2,6 @@
 
 namespace BlackBox\Backend;
 
-use ArrayIterator;
 use BlackBox\Exception\StorageException;
 use BlackBox\Storage;
 use BlackBox\Transformer\Transformer;
@@ -26,33 +25,23 @@ class FileStorage implements IteratorAggregate, Storage
     private $serializer;
 
     /**
-     * @param string      $filename   File in which to store the data.
+     * @param string $filename File in which to store the data.
      * @param Transformer $serializer Transformer that serializes the data into string.
      */
-    public function __construct($filename, Transformer $serializer)
+    public function __construct(string $filename, Transformer $serializer)
     {
-        $this->filename = (string) $filename;
+        $this->filename = $filename;
         $this->serializer = $serializer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function get($id)
+    public function get(string $id)
     {
         $data = $this->read();
 
-        if (! array_key_exists($id, $data)) {
-            return null;
-        }
-
-        return $data[$id];
+        return $data[$id] ?? null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function set($id, $data)
+    public function set(string $id, $data) : void
     {
         $allData = $this->read();
 
@@ -61,10 +50,7 @@ class FileStorage implements IteratorAggregate, Storage
         $this->save($allData);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function remove($id)
+    public function remove(string $id) : void
     {
         $allData = $this->read();
 
@@ -73,19 +59,15 @@ class FileStorage implements IteratorAggregate, Storage
         $this->save($allData);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getIterator()
     {
-        return new ArrayIterator($this->read());
+        yield from $this->read();
     }
 
     /**
-     * @return array
      * @throws StorageException
      */
-    private function read()
+    private function read() : array
     {
         if (! file_exists($this->filename)) {
             return [];
@@ -106,9 +88,6 @@ class FileStorage implements IteratorAggregate, Storage
         return $data;
     }
 
-    /**
-     * @param array $data
-     */
     private function save(array $data)
     {
         $data = $this->serializer->transform($data);

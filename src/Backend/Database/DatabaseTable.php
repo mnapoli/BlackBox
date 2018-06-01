@@ -2,7 +2,6 @@
 
 namespace BlackBox\Backend\Database;
 
-use ArrayIterator;
 use BlackBox\Storage;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
@@ -37,10 +36,7 @@ class DatabaseTable implements IteratorAggregate, Storage
         $this->tableName = (string) $tableName;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function get($id)
+    public function get(string $id)
     {
         $query = sprintf(
             'SELECT * FROM %s WHERE %s = ?',
@@ -61,10 +57,7 @@ class DatabaseTable implements IteratorAggregate, Storage
         return $this->rowToData($row);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function set($id, $data)
+    public function set(string $id, $data) : void
     {
         if ($data === null) {
             $this->remove($id);
@@ -89,10 +82,7 @@ class DatabaseTable implements IteratorAggregate, Storage
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function remove($id)
+    public function remove(string $id) : void
     {
         try {
             $this->connection->delete($this->tableName, [self::COLUMN_ID => $id]);
@@ -101,9 +91,6 @@ class DatabaseTable implements IteratorAggregate, Storage
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getIterator()
     {
         // TODO optimize
@@ -126,26 +113,20 @@ class DatabaseTable implements IteratorAggregate, Storage
             $data[$id] = $this->rowToData($row);
         }
 
-        return new ArrayIterator($data);
+        yield from $data;
     }
 
-    /**
-     * @return string
-     */
-    public function getTableName()
+    public function getTableName() : string
     {
         return $this->tableName;
     }
 
-    /**
-     * @return Connection
-     */
-    public function getDbConnection()
+    public function getDbConnection() : Connection
     {
         return $this->connection;
     }
 
-    private function hasRow($id)
+    private function hasRow(string $id) : bool
     {
         $query = sprintf(
             'SELECT COUNT(*) FROM %s WHERE %s = ?',
@@ -159,10 +140,8 @@ class DatabaseTable implements IteratorAggregate, Storage
 
     /**
      * Quote the column names.
-     * @param array $data
-     * @return array
      */
-    private function quoteColumns(array $data)
+    private function quoteColumns(array $data) : array
     {
         $safeData = [];
         foreach ($data as $key => $value) {
@@ -172,7 +151,7 @@ class DatabaseTable implements IteratorAggregate, Storage
         return $safeData;
     }
 
-    private function createMissingColumns($data)
+    private function createMissingColumns($data) : void
     {
         $table = $this->connection->getSchemaManager()->listTableDetails($this->tableName);
 
@@ -213,24 +192,19 @@ class DatabaseTable implements IteratorAggregate, Storage
         }
     }
 
-    /**
-     * @param array $row
-     * @return array
-     */
-    private function rowToData($row)
+    private function rowToData(array $row) : array
     {
         unset($row[self::COLUMN_ID]);
 
         return $row;
     }
 
-    public static function createTable(Connection $connection, $tableName)
+    public static function createTable(Connection $connection, string $tableName) : void
     {
         $table = new Table($tableName, [
-            new Column(DatabaseTable::COLUMN_ID, Type::getType(Type::INTEGER), [
-                'primary'       => true,
-                'autoincrement' => true,
-                'notnull'       => true,
+            new Column(DatabaseTable::COLUMN_ID, Type::getType(Type::STRING), [
+                'primary' => true,
+                'notnull' => true,
             ]),
         ]);
 

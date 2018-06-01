@@ -16,23 +16,23 @@ class ArrayStorage implements IteratorAggregate, Storage
 {
     private $storage = [];
 
-    public function get($id)
+    public function get(string $id)
     {
         return $this->storage[$id] ?? null;
     }
 
-    public function set($id, $data)
+    public function set(string $id, $data) : void
     {
         $this->storage[$id] = $data;
     }
 
-    public function remove($id)
+    public function remove(string $id) : void
     {
         unset($this->storage[$id]);
     }
 
     public function getIterator()
     {
-        return yield from $this->storage;
+        yield from $this->storage;
     }
 }
