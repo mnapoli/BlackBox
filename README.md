@@ -47,7 +47,6 @@ BlackBox can store data in:
 
 - files
 - database (MySQL, PostgreSQL, SQLite, Oracle, …) using [Doctrine DBAL](http://docs.doctrine-project.org/projects/doctrine-dbal/en/latest/)
-- [Redis](http://redis.io/)
 - PHP arrays (i.e. in memory)
 
 Data can optionally be:
@@ -64,7 +63,6 @@ Backends are classes that implement `Storage`:
 
 - `FileStorage`
 - `DirectoryStorage`
-- `RedisStorage`
 - `DatabaseTable`
 - `ArrayStorage`
 

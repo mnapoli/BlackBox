@@ -20,7 +20,6 @@
         "phpunit/phpunit": "^5.0",
         "phpseclib/phpseclib": "*",
         "symfony/yaml": "^3.0|^4.0",
-        "predis/predis": "~1.0",
         "symfony/filesystem": "^3.0|^4.0",
         "doctrine/dbal": "^2.4"
     }
