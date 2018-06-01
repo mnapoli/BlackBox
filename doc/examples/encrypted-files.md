@@ -8,7 +8,7 @@ This is an example of encrypted file storage:
 $key = 'some-random-and-long-encryption-key';
 
 $storage = new MapWithTransformers(
-    new MultipleFileStorage('/tmp')
+    new DirectoryStorage('/tmp')
 );
 $storage->addTransformer(new PhpSerializeEncoder);
 $storage->addTransformer(AesEncrypter::createDefault($key));

@@ -19,7 +19,7 @@ $storage->setData('Hello World');
 
 `FileStorage` does not implement the `MapStorage` interface, so you cannot use `$storage->get($id)` and `$storage->set($id, $data)`. The reason for this is obvious: a file is not an array structure.
 
-You can use `MultipleFileStorage` instead of `FileStorage` to solve that, but that means having several files written on disk (one for each item). **If you really need to have one file, keep reading**.
+You can use `DirectoryStorage` instead of `FileStorage` to solve that, but that means having several files written on disk (one for each item). **If you really need to have one file, keep reading**.
 
 The solution would be to store an array in the file (which would be encoded in JSON):
 

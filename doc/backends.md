@@ -15,14 +15,14 @@ $storage = new FileStorage('some/file.txt');
 $storage->setData('Hello world!');
 ```
 
-## `MultipleFileStorage`
+## `DirectoryStorage`
 
 *Implements `MapStorage`.*
 
 Stores data in multiple files (one file per ID).
 
 ```php
-$storage = new MultipleFileStorage('some/writable/directory', $extension = 'txt');
+$storage = new DirectoryStorage('some/writable/directory', $extension = 'txt');
 ```
 
 File names are constructed from the ids. If `$extension` is provided, then it is used as file extension.

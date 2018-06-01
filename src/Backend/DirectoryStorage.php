@@ -10,11 +10,11 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
 /**
- * Stores data in multiple files.
+ * Stores data in multiple files in a directory.
  *
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-class MultipleFileStorage implements IteratorAggregate, Storage
+class DirectoryStorage implements IteratorAggregate, Storage
 {
     /**
      * @var string
@@ -27,10 +27,10 @@ class MultipleFileStorage implements IteratorAggregate, Storage
     private $fileExtension;
 
     /**
-     * @param string      $directory     Directory in which to set the data.
-     * @param string      $fileExtension File extension to use (if null, no extension is used).
+     * @param string $directory Directory in which to store the data.
+     * @param string $fileExtension File extension to use (if null, no extension is used).
      *
-     * @throws StorageException The directory doesn't exist.
+     * @throws StorageException The directory doesn't exist and cannot be created.
      */
     public function __construct($directory, $fileExtension = null)
     {

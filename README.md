@@ -66,7 +66,7 @@ Additionally a storage can be cached with another (e.g. cache a DB storage with 
 Backends are classes that implement `Storage`:
 
 - `FileStorage`
-- `MultipleFileStorage`
+- `DirectoryStorage`
 - `RedisStorage`
 - `DatabaseTable`
 - `ArrayStorage`
@@ -89,7 +89,7 @@ You can read all about transformers in the [Transformers documentation](doc/tran
 ```php
 // Store data in files
 $storage = new StorageWithTransformers(
-    new MultipleFileStorage('some/directory')
+    new DirectoryStorage('some/directory')
 );
 
 // Map objects to array and vice-versa
