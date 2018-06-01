@@ -93,27 +93,23 @@ class DatabaseTable implements IteratorAggregate, Storage
 
     public function getIterator()
     {
-        // TODO optimize
         $query = sprintf(
             'SELECT * FROM %s',
             $this->connection->quoteIdentifier($this->tableName)
         );
 
         try {
-            $rows = $this->connection->fetchAll($query);
+            $iterator = $this->connection->executeQuery($query);
         } catch (DBALException $e) {
             throw DatabaseException::fromDBALException($e);
         }
 
-        $data = [];
-
-        foreach ($rows as $row) {
+        foreach ($iterator as $row) {
             $id = $row[self::COLUMN_ID];
+            unset($row[self::COLUMN_ID]);
 
-            $data[$id] = $this->rowToData($row);
+            yield $id => $this->rowToData($row);
         }
-
-        yield from $data;
     }
 
     public function getTableName() : string
