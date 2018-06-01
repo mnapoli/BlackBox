@@ -37,17 +37,6 @@ interface Storage extends Traversable
     public function set($id, $data);
 
     /**
-     * Adds data to the store.
-     *
-     * @param mixed $data
-     *
-     * @throws StorageException Error while storing the data.
-     *
-     * @return string|int Returns the ID under which the data is stored.
-     */
-    public function add($data);
-
-    /**
      * Removes data stored under the given ID.
      *
      * @param string|int $id

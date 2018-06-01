@@ -92,24 +92,6 @@ class DatabaseTable implements IteratorAggregate, Storage
     /**
      * {@inheritdoc}
      */
-    public function add($data)
-    {
-        $data = $this->quoteColumns($data);
-
-        try {
-            $this->createMissingColumns($data);
-
-            $this->connection->insert($this->tableName, $data);
-        } catch (DBALException $e) {
-            throw DatabaseException::fromDBALException($e);
-        }
-
-        return $this->connection->lastInsertId();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function remove($id)
     {
         try {

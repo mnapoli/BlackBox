@@ -26,7 +26,6 @@ interface Storage extends Traversable
 {
     public function get($id);
     public function set($id, $data);
-    public function add($data);
     public function remove($id);
 }
 

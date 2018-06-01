@@ -55,16 +55,6 @@ class StorageWithTransformers implements IteratorAggregate, Storage
     /**
      * {@inheritdoc}
      */
-    public function add($data)
-    {
-        $data = $this->transform($data);
-
-        return $this->storage->add($data);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function remove($id)
     {
         $this->storage->remove($id);

@@ -3,8 +3,6 @@
 namespace BlackBox\Backend;
 
 use ArrayIterator;
-use BlackBox\Id\IdGenerator;
-use BlackBox\Id\RandomStringIdGenerator;
 use BlackBox\Storage;
 use IteratorAggregate;
 use Predis\Client;
@@ -26,11 +24,6 @@ class RedisStorage implements IteratorAggregate, Storage
     private $redis;
 
     /**
-     * @var IdGenerator
-     */
-    private $idGenerator;
-
-    /**
      * Creates a new instance by providing directly the Predis constructor arguments.
      *
      * @param mixed $parameters Connection parameters for one or more servers.
@@ -43,10 +36,9 @@ class RedisStorage implements IteratorAggregate, Storage
         return new static(new Client($parameters, $options));
     }
 
-    public function __construct(Client $redis, IdGenerator $idGenerator = null)
+    public function __construct(Client $redis)
     {
         $this->redis = $redis;
-        $this->idGenerator = $idGenerator ?: new RandomStringIdGenerator();
     }
 
     /**
@@ -69,18 +61,6 @@ class RedisStorage implements IteratorAggregate, Storage
     public function set($id, $data)
     {
         $this->redis->set($id, $data);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function add($data)
-    {
-        $id = $this->idGenerator->getId();
-
-        $this->set($id, $data);
-
-        return $id;
     }
 
     /**

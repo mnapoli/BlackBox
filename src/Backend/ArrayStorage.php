@@ -43,17 +43,6 @@ class ArrayStorage implements IteratorAggregate, Storage
     /**
      * {@inheritdoc}
      */
-    public function add($data)
-    {
-        $this->storage[] = $data;
-
-        end($this->storage);
-        return key($this->storage);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function remove($id)
     {
         unset($this->storage[$id]);

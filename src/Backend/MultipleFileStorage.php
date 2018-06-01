@@ -4,8 +4,6 @@ namespace BlackBox\Backend;
 
 use ArrayIterator;
 use BlackBox\Exception\StorageException;
-use BlackBox\Id\IdGenerator;
-use BlackBox\Id\RandomStringIdGenerator;
 use BlackBox\Storage;
 use IteratorAggregate;
 use Symfony\Component\Finder\Finder;
@@ -29,21 +27,13 @@ class MultipleFileStorage implements IteratorAggregate, Storage
     private $fileExtension;
 
     /**
-     * @var IdGenerator
-     */
-    private $idGenerator;
-
-    /**
      * @param string      $directory     Directory in which to set the data.
      * @param string      $fileExtension File extension to use (if null, no extension is used).
-     * @param IdGenerator $idGenerator
      *
      * @throws StorageException The directory doesn't exist.
      */
-    public function __construct($directory, $fileExtension = null, IdGenerator $idGenerator = null)
+    public function __construct($directory, $fileExtension = null)
     {
-        $this->idGenerator = $idGenerator ?: new RandomStringIdGenerator();
-
         $this->directory = (string) $directory;
         $this->fileExtension = ltrim($fileExtension, '.');
 
@@ -84,18 +74,6 @@ class MultipleFileStorage implements IteratorAggregate, Storage
         $filename = $this->getFilename($id);
 
         file_put_contents($filename, $data);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function add($data)
-    {
-        $id = $this->idGenerator->getId();
-
-        $this->set($id, $data);
-
-        return $id;
     }
 
     /**

@@ -64,20 +64,6 @@ class FileStorage implements IteratorAggregate, Storage
     /**
      * {@inheritdoc}
      */
-    public function add($data)
-    {
-        $allData = $this->read();
-
-        $allData[] = $data;
-        $this->save($allData);
-
-        end($allData);
-        return key($allData);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function remove($id)
     {
         $allData = $this->read();
