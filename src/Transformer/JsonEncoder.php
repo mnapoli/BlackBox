@@ -2,12 +2,14 @@
 
 namespace BlackBox\Transformer;
 
+use BlackBox\Storage;
+
 /**
  * Encodes and decodes data into JSON.
  *
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-class JsonEncoder implements Transformer
+class JsonEncoder extends Transformer
 {
     /**
      * @var bool
@@ -17,15 +19,17 @@ class JsonEncoder implements Transformer
     /**
      * @param bool $pretty Should the JSON be formatted for being read by a human?
      */
-    public function __construct($pretty = false)
+    public function __construct(Storage $storage, $pretty = false)
     {
+        parent::__construct($storage);
+
         $this->pretty = $pretty;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function transform($data)
+    protected function transform($data)
     {
         $options = $this->pretty ? JSON_PRETTY_PRINT : 0;
 
@@ -35,7 +39,7 @@ class JsonEncoder implements Transformer
     /**
      * {@inheritdoc}
      */
-    public function reverseTransform($data)
+    protected function restore($data)
     {
         if ($data === null) {
             return null;

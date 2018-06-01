@@ -97,7 +97,7 @@ class FileStorage implements IteratorAggregate, Storage
 
         $data = file_get_contents($this->filename);
 
-        $data = $this->serializer->reverseTransform($data);
+        $data = $this->serializer->restore($data);
 
         if (! is_array($data)) {
             return [];

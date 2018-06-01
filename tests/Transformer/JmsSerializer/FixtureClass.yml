@@ -1,4 +1,0 @@
-Tests\BlackBox\Transformer\JmsSerializer\FixtureClass:
-    properties:
-        property:
-            type: string

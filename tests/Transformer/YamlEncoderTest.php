@@ -2,6 +2,7 @@
 
 namespace Tests\BlackBox\Transformer;
 
+use BlackBox\Backend\ArrayStorage;
 use BlackBox\Transformer\YamlEncoder;
 use Symfony\Component\Yaml\Yaml;
 
@@ -15,9 +16,15 @@ class YamlEncoderTest extends \PHPUnit_Framework_TestCase
      */
     private $transformer;
 
+    /**
+     * @var ArrayStorage
+     */
+    private $storage;
+
     public function setUp()
     {
-        $this->transformer = new YamlEncoder();
+        $this->storage = new ArrayStorage;
+        $this->transformer = new YamlEncoder($this->storage);
     }
 
     /**
@@ -25,11 +32,9 @@ class YamlEncoderTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_encode_to_yaml()
     {
-        $data = ['bar', 123];
+        $this->transformer->set('foo', ['bar', 123]);
 
-        $transformed = $this->transformer->transform($data);
-
-        $this->assertEquals(Yaml::dump($data), $transformed);
+        $this->assertEquals(Yaml::dump(['bar', 123]), $this->storage->get('foo'));
     }
 
     /**
@@ -37,11 +42,9 @@ class YamlEncoderTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_decode_from_yaml()
     {
-        $data = ['bar', 123];
+        $this->transformer->set('foo', ['bar', 123]);
 
-        $yaml = Yaml::dump($data);
-
-        $this->assertEquals($data, $this->transformer->reverseTransform($yaml));
+        $this->assertEquals(['bar', 123], $this->transformer->get('foo'));
     }
 
     /**
@@ -49,9 +52,9 @@ class YamlEncoderTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_encode_primary_types()
     {
-        $yaml = $this->transformer->transform('bar');
+        $this->transformer->set('foo', 'bar');
 
-        $this->assertEquals('bar', $yaml);
+        $this->assertEquals('bar', $this->storage->get('foo'));
     }
 
     /**
@@ -61,7 +64,7 @@ class YamlEncoderTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_not_encode_objects()
     {
-        $this->transformer->transform(new \stdClass());
+        $this->transformer->set('foo', new \stdClass);
     }
 
     /**
@@ -69,6 +72,8 @@ class YamlEncoderTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_handle_get_null()
     {
-        $this->assertNull($this->transformer->reverseTransform(null));
+        $this->transformer->set('foo', null);
+
+        $this->assertNull($this->storage->get('foo'));
     }
 }

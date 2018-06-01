@@ -2,6 +2,7 @@
 
 namespace Tests\BlackBox\Transformer;
 
+use BlackBox\Backend\ArrayStorage;
 use BlackBox\Transformer\JsonEncoder;
 
 /**
@@ -14,13 +15,14 @@ class JsonEncoderTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_encode_into_json()
     {
-        $transformer = new JsonEncoder();
+        $storage = new ArrayStorage;
+        $transformer = new JsonEncoder($storage);
 
         $data = ['bar', 123];
 
-        $json = $transformer->transform($data);
+        $transformer->set('foo', $data);
 
-        $this->assertEquals(json_encode($data), $json);
+        $this->assertEquals(json_encode($data), $storage->get('foo'));
     }
 
     /**
@@ -28,13 +30,14 @@ class JsonEncoderTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_encode_into_json_pretty()
     {
-        $transformer = new JsonEncoder(true);
+        $storage = new ArrayStorage;
+        $transformer = new JsonEncoder($storage, true);
 
         $data = ['bar', 123];
 
-        $json = $transformer->transform($data);
+        $transformer->set('foo', $data);
 
-        $this->assertEquals(json_encode($data, JSON_PRETTY_PRINT), $json);
+        $this->assertEquals(json_encode($data, JSON_PRETTY_PRINT), $storage->get('foo'));
     }
 
     /**
@@ -42,36 +45,34 @@ class JsonEncoderTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_decode_from_json()
     {
-        $data = ['bar', 123];
+        $transformer = new JsonEncoder(new ArrayStorage);
 
-        $json = json_encode($data);
+        $transformer->set('foo', ['bar', 123]);
 
-        $transformer = new JsonEncoder();
-
-        $this->assertEquals($data, $transformer->reverseTransform($json));
+        $this->assertEquals(['bar', 123], $transformer->get('foo'));
     }
 
     /**
      * @test
      */
-    public function it_should_decode_indexed_array_into_an_array()
+    public function it_should_support_indexed_arrays()
     {
-        $data = ['foo' => 'bar'];
+        $transformer = new JsonEncoder(new ArrayStorage);
 
-        $json = json_encode($data);
+        $transformer->set('foo', ['foo' => 'bar']);
 
-        $transformer = new JsonEncoder();
-
-        $this->assertEquals($data, $transformer->reverseTransform($json));
+        $this->assertEquals(['foo' => 'bar'], $transformer->get('foo'));
     }
 
     /**
      * @test
      */
-    public function decoding_null_should_return_null()
+    public function it_should_support_null()
     {
-        $transformer = new JsonEncoder();
+        $transformer = new JsonEncoder(new ArrayStorage);
 
-        $this->assertNull($transformer->reverseTransform(null));
+        $transformer->set('foo', null);
+
+        $this->assertNull($transformer->get('foo'));
     }
 }

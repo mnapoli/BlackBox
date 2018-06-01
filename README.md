@@ -54,10 +54,7 @@ Data can optionally be:
 
 - stored in JSON
 - stored in YAML
-- serialized using PHP's `serialize()` function
 - encrypted with AES
-
-An integration with the [JMS Serializer](http://jmsyst.com/libs/serializer) library also allows to serialize PHP objects to JSON, XML or YAML.
 
 Additionally a storage can be cached with another (e.g. cache a DB storage with a Redis or array storage).
 
@@ -79,40 +76,29 @@ Transformers transform data before storage and after retrieval:
 
 - `JsonEncoder`
 - `YamlEncoder`
-- `PhpSerializerEncoder`
 - `ObjectArrayMapper`
 - `AesEncrypter`
-- `JmsSerializer` for using the [JMS Serializer library](http://jmsyst.com/libs/serializer)
 
 You can read all about transformers in the [Transformers documentation](doc/transformers.md).
 
 ```php
-// Store data in files
-$storage = new StorageWithTransformers(
+// Encode the data in JSON
+$storage = new JsonEncoder(
+    // Store data in files
     new DirectoryStorage('some/directory')
 );
 
-// Map objects to array and vice-versa
-// (because JSON can't deserialize arrays into PHP objects of a specific class)
-$storage->addTransformer(new ObjectArrayMapper('MyClass'));
-
-// Encode the data in JSON
-$storage->addTransformer(new JsonEncoder());
-
-$object = new MyClass();
-$object->name = 'Lebowski';
-
-$storage->set('foo', $object);
-// will turn the object into an array
-// then will encode it in JSON
+$storage->set('foo', [
+    'name' => 'Lebowski',
+]);
+// will encode it in JSON
 // then will store it into a file
 
-$object = $storage->get('foo');
+$data = $storage->get('foo');
 // will read from the file
 // then will decode the JSON
-// then will map the decoded array to a MyClass object
 
-echo $object->name; // Lebowski
+echo $data['name']; // Lebowski
 ```
 
 ## License

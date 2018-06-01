@@ -3,6 +3,7 @@
 namespace BlackBox\Transformer;
 
 use BlackBox\Exception\StorageException;
+use BlackBox\Storage;
 use Crypt_AES;
 
 /**
@@ -10,7 +11,7 @@ use Crypt_AES;
  *
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-class AesEncrypter implements Transformer
+class AesEncrypter extends Transformer
 {
     /**
      * @var Crypt_AES
@@ -20,27 +21,27 @@ class AesEncrypter implements Transformer
     /**
      * Create an instance using the default parameters for the encrypter.
      *
-     * @param string  $encryptionKey The secret encrypt key to use.
-     *
-     * @return AesEncrypter
+     * @param string $encryptionKey The secret encrypt key to use.
      */
-    public static function createDefault($encryptionKey)
+    public static function createDefault(Storage $storage, string $encryptionKey) : self
     {
         $encrypter = new Crypt_AES(CRYPT_AES_MODE_CBC);
         $encrypter->setKey($encryptionKey);
 
-        return new static($encrypter);
+        return new static($storage, $encrypter);
     }
 
-    public function __construct(Crypt_AES $encrypter)
+    public function __construct(Storage $storage, Crypt_AES $encrypter)
     {
+        parent::__construct($storage);
+
         $this->encrypter = $encrypter;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function transform($data)
+    protected function transform($data)
     {
         if ($data === null) {
             return null;
@@ -54,7 +55,7 @@ class AesEncrypter implements Transformer
     /**
      * {@inheritdoc}
      */
-    public function reverseTransform($data)
+    protected function restore($data)
     {
         if ($data === null) {
             return null;

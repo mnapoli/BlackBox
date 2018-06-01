@@ -2,6 +2,7 @@
 
 namespace Tests\BlackBox\Transformer;
 
+use BlackBox\Backend\ArrayStorage;
 use BlackBox\Transformer\AesEncrypter;
 use Crypt_AES;
 
@@ -20,13 +21,20 @@ class AesEncrypterTest extends \PHPUnit_Framework_TestCase
      */
     private $encrypter;
 
+    /**
+     * @var ArrayStorage
+     */
+    private $decoratedStorage;
+
     public function setUp()
     {
         $this->encrypter = new Crypt_AES(CRYPT_AES_MODE_CBC);
         $this->encrypter->setKey('foo');
 
-        $this->transformer = new AesEncrypter($this->encrypter);
+        $this->decoratedStorage = new ArrayStorage;
+        $this->transformer = new AesEncrypter($this->decoratedStorage, $this->encrypter);
     }
+
     /**
      * @test
      */
@@ -34,7 +42,8 @@ class AesEncrypterTest extends \PHPUnit_Framework_TestCase
     {
         $data = 'Hello world!';
 
-        $encrypted = $this->transformer->transform($data);
+        $this->transformer->set('foo', $data);
+        $encrypted = $this->decoratedStorage->get('foo');
 
         $this->assertEquals($data, $this->encrypter->decrypt($encrypted));
     }
@@ -44,7 +53,8 @@ class AesEncrypterTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_not_encrypt_null()
     {
-        $encrypted = $this->transformer->transform(null);
+        $this->transformer->set('foo', null);
+        $encrypted = $this->decoratedStorage->get('foo');
 
         $this->assertNull($encrypted);
     }
@@ -55,9 +65,9 @@ class AesEncrypterTest extends \PHPUnit_Framework_TestCase
     public function it_should_decrypt()
     {
         $data = 'Hello world!';
-        $encrypted = $this->encrypter->encrypt($data);
+        $this->transformer->set('foo', $data);
 
-        $this->assertEquals($data, $this->transformer->reverseTransform($encrypted));
+        $this->assertEquals($data, $this->transformer->get('foo'));
     }
 
     /**
@@ -65,7 +75,9 @@ class AesEncrypterTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_not_decrypt_null()
     {
-        $this->assertNull($this->transformer->reverseTransform(null));
+        $this->transformer->set('foo', null);
+
+        $this->assertNull($this->transformer->get(null));
     }
 
     /**
@@ -75,7 +87,7 @@ class AesEncrypterTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_fail_with_non_strings()
     {
-        $this->transformer->reverseTransform(123);
+        $this->transformer->set('foo', 123);
     }
 
     /**
@@ -85,6 +97,16 @@ class AesEncrypterTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_fail_with_objects()
     {
-        $this->transformer->reverseTransform(new \stdClass());
+        $this->transformer->set('foo', new \stdClass());
+    }
+
+    /**
+     * @test
+     * @expectedException \BlackBox\Exception\StorageException
+     * @expectedExceptionMessage The AesEncrypter can only encrypt and decrypt strings, array given
+     */
+    public function it_should_fail_with_arrays()
+    {
+        $this->transformer->set('foo', []);
     }
 }

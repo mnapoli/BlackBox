@@ -2,6 +2,7 @@
 
 namespace Tests\BlackBox\Transformer;
 
+use BlackBox\Backend\ArrayStorage;
 use BlackBox\Transformer\ObjectArrayMapper;
 use Tests\BlackBox\Transformer\ObjectArrayMapper\FixtureClass;
 
@@ -17,9 +18,15 @@ class ObjectArrayMapperTest extends \PHPUnit_Framework_TestCase
      */
     private $transformer;
 
+    /**
+     * @var ArrayStorage
+     */
+    private $storage;
+
     public function setUp()
     {
-        $this->transformer = new ObjectArrayMapper(self::FIXTURE);
+        $this->storage = new ArrayStorage;
+        $this->transformer = new ObjectArrayMapper($this->storage, self::FIXTURE);
     }
 
     /**
@@ -28,13 +35,15 @@ class ObjectArrayMapperTest extends \PHPUnit_Framework_TestCase
     public function it_should_encode_object_to_array()
     {
         $object = new FixtureClass('string', 123, ['array']);
-        $expectedArray = [
-            'public'    => 'string',
-            'protected' => 123,
-            'private'   => ['array'],
-        ];
 
-        $this->assertEquals($expectedArray, $this->transformer->transform($object));
+        $this->transformer->set('foo', $object);
+
+        $expectedArray = [
+            'public' => 'string',
+            'protected' => 123,
+            'private' => ['array'],
+        ];
+        $this->assertEquals($expectedArray, $this->storage->get('foo'));
     }
 
     /**
@@ -42,25 +51,22 @@ class ObjectArrayMapperTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_decode_array_to_object()
     {
-        $array = [
-            'public'    => 'string',
-            'protected' => 123,
-            'private'   => ['array'],
-        ];
-        $expectedObject = new FixtureClass('string', 123, ['array']);
+        $object = new FixtureClass('string', 123, ['array']);
 
-        $this->assertEquals($expectedObject, $this->transformer->reverseTransform($array));
+        $this->transformer->set('foo', $object);
+
+        $this->assertEquals($object, $this->transformer->get('foo'));
+        $this->assertNotSame($object, $this->transformer->get('foo'));
     }
 
     /**
      * @test
      */
-    public function it_should_passthrough_primitive_types()
+    public function it_should_support_primitive_types()
     {
-        $data = $this->transformer->transform(123);
+        $this->transformer->set('foo', 123);
 
-        $this->assertEquals(123, $data);
-        $this->assertEquals(123, $this->transformer->reverseTransform($data));
+        $this->assertEquals(123, $this->transformer->get('foo'));
     }
 
     /**
@@ -68,9 +74,11 @@ class ObjectArrayMapperTest extends \PHPUnit_Framework_TestCase
      */
     public function it_should_ignore_static_properties()
     {
-        $array = $this->transformer->transform(new FixtureClass(null, null, null));
+        $object = new FixtureClass(null, null, null);
 
-        $this->assertNotContains('static', $array);
+        $this->transformer->set('foo', $object);
+
+        $this->assertNotContains('static', $this->storage->get('foo'));
     }
 
     /**
@@ -82,8 +90,9 @@ class ObjectArrayMapperTest extends \PHPUnit_Framework_TestCase
             'foo' => 'bar',
             'baz' => 123,
         ];
+        $this->storage->set('foo', $array);
 
         $expectedObject = new FixtureClass(null, null, null);
-        $this->assertEquals($expectedObject, $this->transformer->reverseTransform($array));
+        $this->assertEquals($expectedObject, $this->transformer->get('foo'));
     }
 }

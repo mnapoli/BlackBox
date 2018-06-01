@@ -7,10 +7,9 @@ Transformers are classes that transform the data before it is stored or retrieve
 They can be used on top of another storage like so:
 
 ```php
-$storage = new StorageWithTransformers(
+$storage = new JsonEncoder(
     new FileStorage('data.json')
 );
-$storage->addTransformer(new JsonEncoder());
 
 $storage->setData('Hello World!');
 echo $storage->getData();
@@ -21,7 +20,7 @@ echo $storage->getData();
 Encodes data from and to JSON.
 
 ```php
-$storage = new JsonEncoder($pretty);
+$storage = new JsonEncoder($anotherStorage);
 ```
 
 If `$pretty` is true, then the JSON will be formatted to be human readable (false by default).
@@ -31,7 +30,7 @@ If `$pretty` is true, then the JSON will be formatted to be human readable (fals
 Encodes data from and to YAML.
 
 ```php
-$storage = new YamlEncoder();
+$storage = new YamlEncoder($anotherStorage);
 ```
 
 To use this transformer, you will need to install the `Symfony\YAML` component:
@@ -40,20 +39,12 @@ To use this transformer, you will need to install the `Symfony\YAML` component:
 composer require symfony/yaml
 ```
 
-## `PhpSerializerEncoder`
-
-Encodes data using the PHP `serialize` function.
-
-```php
-$storage = new PhpSerializerEncoder();
-```
-
 ## `ObjectArrayMapper`
 
 Maps objects to arrays and vice-versa.
 
 ```php
-$storage = new ObjectArrayMapper('MyClass');
+$storage = new ObjectArrayMapper($anotherStorage, 'MyClass');
 
 class MyClass {
     private $foo = 'Hello';
@@ -77,10 +68,10 @@ Encrypts and decrypts data using AES encryption.
 $encrypter = new Crypt_AES(CRYPT_AES_MODE_CBC);
 $encrypter->setKey($encryptionKey);
 
-$storage = new AesEncrypter($encrypter);
+$storage = new AesEncrypter($anotherStorage, $encrypter);
 
 // Same as above:
-$storage = AesEncrypter::createDefault($encryptionKey);
+$storage = AesEncrypter::createDefault($anotherStorage, $encryptionKey);
 ```
 
 Remember to store the encryption key securely!
@@ -91,27 +82,3 @@ To use this transformer, you will need to install the `phpseclib`:
 composer require phpseclib/phpseclib
 ```
 
-## `JmsSerializer`
-
-[JMS Serializer library](http://jmsyst.com/libs/serializer) integration to serialize objects to string (JSON, XML or YAML).
-
-Example:
-
-```php
-// Create and configure the JMS Serializer
-$jmsSerializer = SerializerBuilder::create()->build();
-
-// The JMS serializer could then be used like this:
-// $serializer->deserialize($jsonData, 'MyNamespace\MyObject', 'json');
-
-// So we create our transformer like this:
-$transformer = new JmsSerializer($jmsSerializer, 'json', 'MyNamespace\MyObject');
-```
-
-See the [JMS Serializer](http://jmsyst.com/libs/serializer) documentation to learn how to configure it.
-
-To use this transformer, you will need to install the JMS Serializer library:
-
-```
-composer require jms/serializer
-```

@@ -17,7 +17,7 @@ abstract class BaseStorageTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function it_should_store_data_as_map()
+    public function it_should_store_data()
     {
         $this->storage->set('foo', 'bar');
 

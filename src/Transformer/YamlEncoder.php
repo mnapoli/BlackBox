@@ -10,22 +10,16 @@ use Symfony\Component\Yaml\Yaml;
  *
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-class YamlEncoder implements Transformer
+class YamlEncoder extends Transformer
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function transform($data)
+    protected function transform($data)
     {
         $this->assertIsNotObject($data);
 
         return Yaml::dump($data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function reverseTransform($data)
+    protected function restore($data)
     {
         if ($data === null) {
             return null;
